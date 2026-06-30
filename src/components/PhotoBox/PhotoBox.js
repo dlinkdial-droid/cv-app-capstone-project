@@ -1,9 +1,9 @@
 import "./PhotoBox.scss";
-import avatar from "../../assets/images/avatar.png"; // Путь к твоей дефолтной фотке
+import avatar from "../../assets/images/avatar.png";
 
-const PhotoBox = ({ userName }) => {
+const PhotoBox = ({ userName, className }) => {
     return (
-        <figure className="photo-box">
+        <figure className={`photo-box ${className || ""}`}>
             <img src={avatar} alt={userName} className="photo-box__image" />
             <figcaption className="photo-box__name">{userName}</figcaption>
         </figure>

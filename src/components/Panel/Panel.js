@@ -4,10 +4,12 @@ import PhotoBox from "../PhotoBox/PhotoBox";
 import Button from "../Button/Button";
 import { faBars, faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import "./Panel.scss";
+import { useNavigate } from "react-router-dom";
 
 const Panel = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [activeId, setActiveId] = useState("about");
+    const navigate = useNavigate();
 
     return (
         <aside className={`panel ${isCollapsed ? "panel--collapsed" : ""}`}>
@@ -23,7 +25,7 @@ const Panel = () => {
                     <Button
                         icon={faAngleLeft}
                         text="Go back"
-                        onClick={() => setActiveId("about")} // Теперь кнопка работает синхронно
+                        onClick={() => navigate('/')}
                     />
                 </div>
             </div>

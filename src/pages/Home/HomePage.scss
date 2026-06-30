@@ -53,6 +53,22 @@
             font-weight: $weight-bold;
             line-height: 1.2;
         }
+
+        @media (max-width: 600px) {
+
+            .photo-box__image {
+                width: 100px;
+                height: 100px;
+                flex-shrink: 0;
+            }
+
+            .photo-box__name {
+                max-height: none;
+                opacity: 1;
+                overflow: visible;
+                font-size: 2rem;
+            }
+        }
     }
 
     .custom-btn {
@@ -64,6 +80,20 @@
 
         &:hover {
             background-color: $color-shamrock;
+        }
+
+        @media (max-width: 600px) {
+            padding: 0.625rem 1.25rem;
+
+            .custom-btn__icon {
+                margin-right: 5px;
+            }
+
+            .custom-btn__text {
+                max-width: 150px;
+                opacity: 1;
+                overflow: visible;
+            }
         }
     }
 }

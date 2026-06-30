@@ -1,0 +1,71 @@
+@import "../../assets/styles/typography";
+@import "../../assets/styles/variables";
+
+.custom-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 1.25rem;
+    background-color: $color-oxford-blue;
+    border: 1px solid $color-oxford-blue;
+    border-radius: 5px;
+    cursor: pointer;
+
+    // ПЛАВНОСТЬ: добавляем паддинги в анимацию для красивого сжатия кнопки на мобилках
+    transition: background-color 0.2s ease, border-color 0.2s ease, padding 0.3s ease-in-out;
+
+    //Ховер сработает ТОЛЬКО на компах/ноутбуках с мышкой
+    @media (hover: hover) {
+        &:hover {
+            background-color: $color-shamrock;
+            border-color: $color-shamrock;
+        }
+    }
+
+    // ЭФФЕКТ ДЛЯ МОБИЛОК: Сработает в момент короткого зажатия пальцем (активное состояние)
+    &:active {
+        // Делаем цвет чуть темнее основного зеленого или берем другой цвет для тапа
+        background-color: darken($color-shamrock, 5%);
+        border-color: darken($color-shamrock, 5%);
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        margin-right: 5px;
+        color: $color-white;
+        // ПЛАВНОСТЬ: чтобы маргин исчезал без рывков
+        transition: margin-right 0.3s ease-in-out;
+
+        svg {
+            width: 14px;
+            height: 14px;
+        }
+    }
+
+    &__text {
+        @include text-button(0.875rem);
+
+        // ПЛАВНОСТЬ: готовим текст кнопки к плавному схлопыванию
+        max-width: 150px;
+        opacity: 1;
+        display: inline-block;
+        white-space: nowrap;
+        transition: max-width 0.3s ease-in-out, opacity 0.2s ease-in-out;
+    }
+
+    // ИНТЕГРАЦИЯ С СЖАТОЙ ПАНЕЛЬЮ (< 600px)
+    @media (max-width: 600px) {
+        padding: 0.625rem; // Делаем кнопку компактным квадратом вокруг иконки
+
+        &__icon {
+            margin-right: 0; // На мобилке текста нет, убираем правый отступ у иконки
+        }
+
+        &__text {
+            max-width: 0; // Плавно сжимаем текст кнопки в ноль
+            opacity: 0; // Растворяем его
+            overflow: hidden; // Скрываем остатки букв
+        }
+    }
+}

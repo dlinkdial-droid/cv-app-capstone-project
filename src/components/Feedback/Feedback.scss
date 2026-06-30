@@ -1,0 +1,17 @@
+@import "../../assets/styles/typography";
+@import "../../assets/styles/variables";
+
+.feedback {
+    // margin-bottom: 2.5rem;
+
+    &__title {
+        @include text-title-1;
+        margin-bottom: 1.5rem;
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem; // Отступ между отзывами
+    }
+}

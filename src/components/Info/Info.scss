@@ -1,0 +1,28 @@
+@import "../../assets/styles/typography";
+@import "../../assets/styles/variables";
+
+.info {
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 0.5625rem;
+    padding: 0.9375rem;
+    gap: 0.9375rem;
+    background-color: $color-gallery;
+
+
+
+    &__title {
+        @include text-title-1;
+        font-size: 1rem;
+        color: $color-oxford-blue;
+
+    }
+
+
+    &__content {
+        @include text-body;
+        color: $color-oxford-blue;
+    }
+}

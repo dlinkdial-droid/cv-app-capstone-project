@@ -1,0 +1,39 @@
+@import "../../../assets/styles/typography";
+@import "../../../assets/styles/variables";
+
+.expertise-item {
+    display: flex;
+    align-items: flex-start;
+
+    &__sidebar {
+        display: flex;
+        flex-direction: column;
+        width: 30%; // Фиксированная левая колонка (компания + дата)
+        padding-right: 1.875rem;
+    }
+
+    &__main {
+        display: flex;
+        flex-direction: column;
+        width: 70%; // Правая колонка под контент (должность + описание)
+    }
+
+    &__company {
+        @include text-heading-sm; // Сработает дефолтный $color-oxford-blue
+        margin-bottom: 0.3125rem;
+    }
+
+    &__date {
+        @include text-body(1rem, 1.2);
+    }
+
+    &__job {
+        @include text-heading-sm; // Снова дефолтный 16px bold
+        margin-bottom: 0.3125rem;
+    }
+
+    &__description {
+        @include text-body;
+        color: $color-oxford-blue;
+    }
+}

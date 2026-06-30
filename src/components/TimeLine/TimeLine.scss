@@ -1,0 +1,58 @@
+@import "../../assets/styles/variables";
+@import "../../assets/styles/typography";
+
+$color-shamrock: #2ecc71;
+
+.timeline {
+    width: 100%;
+    background-color: #ffffff;
+
+    &__title {
+        @include text-title-1;
+        margin-bottom: 2.5rem;
+    }
+
+    &__wrapper {
+        max-height: 370px;
+        overflow-y: auto;
+        // padding-right: 10px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: auto;
+
+        @media (hover: hover) and (pointer: fine) {
+            scrollbar-width: thin;
+            scrollbar-color: transparent transparent;
+
+            &::-webkit-scrollbar {
+                width: 4px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: transparent;
+                border-radius: 2px;
+            }
+
+            &:hover {
+                scrollbar-color: lighten($color-shamrock, 15%) #f1f1f1;
+
+                &::-webkit-scrollbar-track {
+                    background: #f1f1f1;
+                }
+
+                &::-webkit-scrollbar-thumb {
+                    background: lighten($color-shamrock, 15%);
+                }
+            }
+        }
+    }
+
+    &__list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+}

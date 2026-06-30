@@ -1,0 +1,67 @@
+@import "../../../assets/styles/typography";
+@import "../../../assets/styles/variables";
+
+.navigation-item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%; // Чтобы элемент занимал всю ширину списка
+
+    &__link {
+        display: flex;
+        align-items: center;
+        width: 100%; // Растягиваем на всю ширину панели для правильной центровки
+        padding: 1.125rem 1.25rem;
+        gap: 1.25rem;
+        color: $color-raven;
+
+        // ПЛАВНОСТЬ: добавляем анимацию для gap и padding при переходе на мобилку
+        transition: color 0.2s ease, gap 0.3s ease-in-out, padding 0.3s ease-in-out;
+
+        &:hover {
+            color: white;
+        }
+
+        &--selected {
+            color: $color-shamrock;
+
+            &:hover {
+                color: $color-shamrock;
+            }
+        }
+    }
+
+    &__icon {
+        height: 0.875rem;
+        width: 0.875rem;
+        color: inherit;
+        flex-shrink: 0; // Гарантируем, что иконка не сплющится
+    }
+
+    &__text {
+        @include text-body(1rem, 1.2);
+        color: inherit;
+
+        // ПЛАВНОСТЬ: готовим текст к красивому исчезновению
+        max-width: 200px; // Заведомо больше, чем длина текста
+        opacity: 1;
+        display: inline-block;
+        white-space: nowrap;
+        transition: max-width 0.3s ease-in-out, opacity 0.2s ease-in-out;
+    }
+
+    // АДАПТИВ ДЛЯ МОБИЛОК (Экран < 600px)
+    @media (max-width: 600px) {
+        &__link {
+            justify-content: center; // Иконка встанет строго по центру
+            padding: 1.125rem 0; // Схлопываем боковые паддинги
+            gap: 0; // УБИРАЕТ тот самый отступ справа от иконки!
+        }
+
+        &__text {
+            max-width: 0; // Плавно зажимаем текст по ширине
+            opacity: 0; // Плавно растворяем в воздухе
+            overflow: hidden; // Прячем то, что не влезло
+        }
+    }
+}

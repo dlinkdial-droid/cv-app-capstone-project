@@ -1,0 +1,24 @@
+@import "../../../assets/styles/variables";
+
+.filter-tab {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 1rem;
+    color: $color-oxford-blue;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    font-family: inherit;
+
+    &:hover {
+        color: white;
+    }
+
+    &--active {
+        color: $color-shamrock;
+
+        &:hover {
+            color: $color-shamrock;
+        }
+    }
+}

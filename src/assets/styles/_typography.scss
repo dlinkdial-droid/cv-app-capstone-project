@@ -1,0 +1,46 @@
+@import "./variables";
+
+
+@mixin text-title-1 {
+    font-family: $font-main;
+    font-size: 1.5625rem;
+    font-weight: $weight-bold;
+    line-height: 1.2;
+    color: $color-shamrock;
+}
+
+
+@mixin text-content {
+    font-family: $font-main;
+    font-size: 0.875rem;
+    font-weight: $weight-regular;
+    line-height: 1.5;
+    color: $color-oxford-blue
+}
+
+
+// button component mixins
+@mixin text-button($font-size: 1rem) {
+    font-family: $font-main;
+    font-size: $font-size;
+    font-weight: $weight-regular;
+    color: $color-white;
+    line-height: 1.2;
+}
+
+// expertise component mixins
+@mixin text-heading-sm {
+    font-family: $font-main;
+    font-size: 1rem; // 16px
+    font-weight: $weight-bold;
+    line-height: 1.2;
+    color: $color-oxford-blue;
+}
+
+@mixin text-body ($font-size: 0.875rem, $lh: 1.5) {
+    font-family: $font-main;
+    font-size: $font-size;
+    font-weight: $weight-regular;
+    line-height: $lh;
+    color: $color-raven;
+}

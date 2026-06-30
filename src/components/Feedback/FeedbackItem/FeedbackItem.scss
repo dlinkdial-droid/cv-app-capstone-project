@@ -1,0 +1,55 @@
+@import "../../../assets/styles/typography";
+@import "../../../assets/styles/variables";
+
+.feedback-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+
+    &__content {
+        padding: 0.84375rem 0.9375rem;
+        background-color: $color-gallery ;
+
+        p {
+            @include text-body;
+            color: $color-oxford-blue;
+        }
+    }
+
+    &__reporter {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem; // Отступ между аватаркой и текстом автора
+    }
+
+    &__avatar {
+        width: 3.125rem;
+        height: 3.125rem;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    &__meta {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        @include text-body;
+    }
+
+    &__name {
+        font-weight: $weight-regular;
+        color: $color-oxford-blue;
+    }
+
+    &__link {
+        color: $color-shamrock;
+
+        &:hover {
+            text-decoration: underline;
+        }
+
+        cite {
+            font-style: normal; // Отменяем дефолтный курсив тега <cite>
+        }
+    }
+}

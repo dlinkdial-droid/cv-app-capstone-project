@@ -1,0 +1,73 @@
+@import "../../assets/styles/variables";
+@import "../../assets/styles/typography";
+
+.portfolio {
+    width: 100%;
+
+    &__title {
+        @include text-title-1;
+        margin-bottom: 2.5rem;
+    }
+
+    &__tabs {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.25rem;
+        font-weight: $weight-regular;
+        font-size: 1rem;
+        font-family: $font-main;
+    }
+
+    &__tab {
+        background: none;
+        border: none;
+        padding: 0;
+        font-size: 1rem;
+        color: $color-oxford-blue;
+        cursor: pointer;
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: white;
+        }
+
+        &--active {
+            color: $color-shamrock;
+
+            &:hover {
+                color: $color-shamrock;
+            }
+        }
+    }
+
+    &__grid {
+        width: 100%;
+        // Используем 1.25rem (твой отступ) для компенсации
+        margin-right: -1.25rem;
+
+        &::after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+    }
+
+    &__item {
+        float: left;
+        width: 25%;
+        padding-right: 1.25rem; // Стабильный отступ
+        margin-bottom: 1.25rem; // Добавили нижний отступ для многострочной сетки
+        box-sizing: border-box;
+
+        @media (max-width: 1024px) {
+            width: 50%;
+        }
+
+        @media (max-width: 600px) {
+            width: 100%;
+            // На мобилке отступ обычно не нужен, если сетка в одну колонку
+            padding-right: 0;
+        }
+    }
+}

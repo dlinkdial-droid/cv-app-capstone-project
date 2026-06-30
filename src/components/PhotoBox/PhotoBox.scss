@@ -1,0 +1,47 @@
+@import "../../assets/styles/typography";
+@import "../../assets/styles/variables";
+
+.photo-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.625rem;
+    transition: gap 0.3s ease-in-out;
+
+    &__image {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid $color-white;
+        // Плавное изменение размеров круга
+        transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
+    }
+
+    &__name {
+        @include text-body(1rem, 1.2);
+        color: $color-white;
+        font-weight: $weight-bold;
+        text-align: center;
+        max-height: 50px;
+        opacity: 1;
+        // Плавное скрытие текста
+        transition: max-height 0.3s ease-in-out, opacity 0.2s ease-in-out;
+    }
+
+    @media (max-width: 600px) {
+        gap: 0;
+
+        &__image {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0; //  держит круглую форму
+        }
+
+        &__name {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+    }
+}

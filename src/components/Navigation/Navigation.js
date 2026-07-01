@@ -1,3 +1,4 @@
+import React from 'react';
 import {
     faUser,
     faGraduationCap,
@@ -15,7 +16,7 @@ const Navigation = ({ activeId, setActiveId }) => {
         { id: "about", label: "About me", icon: faUser },
         { id: "education", label: "Education", icon: faGraduationCap },
         { id: "experience", label: "Experience", icon: faPen },
-        { id: "skills", label: "Skills", icon: faGem },
+        // { id: "skills", label: "Skills", icon: faGem },
         { id: "portfolio", label: "Portfolio", icon: faBriefcase },
         { id: "contacts", label: "Contacts", icon: faPaperPlane },
         { id: "feedbacks", label: "Feedbacks", icon: faComment }
@@ -29,8 +30,16 @@ const Navigation = ({ activeId, setActiveId }) => {
                         key={item.id}
                         icon={item.icon}
                         label={item.label}
+                        href={`#${item.id}`}
                         status={activeId === item.id ? "selected" : "default"}
-                        onClick={() => setActiveId(item.id)}
+                        onClick={() => {
+                            setActiveId(item.id); // 1. Мгновенно ставим активный ID
+
+                            const targetSection = document.getElementById(item.id);
+                            if (targetSection) {
+                                targetSection.scrollIntoView({ behavior: "smooth", block: "start" }); // 2. Начинаем плавный скролл
+                            }
+                        }}
                     />
                 ))}
             </ul>

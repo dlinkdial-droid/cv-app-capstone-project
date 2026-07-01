@@ -6,19 +6,16 @@ import { faBars, faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import "./Panel.scss";
 import { useNavigate } from "react-router-dom";
 
-const Panel = () => {
+const Panel = ({ activeId, setActiveId }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
-    const [activeId, setActiveId] = useState("about");
     const navigate = useNavigate();
 
     return (
         <aside className={`panel ${isCollapsed ? "panel--collapsed" : ""}`}>
 
-            {/* Первая дивка: Весь контент (Фото, Меню, Кнопка) */}
             <div className="panel__content">
                 <PhotoBox userName="John Doe" />
 
-                {/* Передаем стейт вовнутрь */}
                 <Navigation activeId={activeId} setActiveId={setActiveId} />
 
                 <div className="panel__footer">
@@ -30,7 +27,6 @@ const Panel = () => {
                 </div>
             </div>
 
-            {/* Вторая дивка: Зона гамбургера (Прозрачная полоса) */}
             <div className="panel__handle">
                 <Button
                     icon={faBars}

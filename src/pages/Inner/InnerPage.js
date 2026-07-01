@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Panel from "../../components/Panel/Panel";
 import Box from '../../components/Box/Box';
 import BackToTop from "../../components/BackToTop/BackToTop";
@@ -11,7 +12,16 @@ import reporterAvatar from '../../assets/images/reporter_img.png';
 
 import "./InnerPage.scss";
 
+const sectionAnimation = {
+    initial: { opacity: 0, y: 40 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.15 },
+    transition: { duration: 0.6, ease: "easeOut" }
+};
+
 const Inner = () => {
+    const [activeId, setActiveId] = useState("about");
+
     const expertiseMockData = [
         {
             date: "2013-2014",
@@ -50,38 +60,90 @@ const Inner = () => {
         }
     ];
 
+    useEffect(() => {
+        // Принудительно поднимаем страницу вверх при загрузке
+        window.scrollTo(0, 0);
+
+        const sectionIds = ["about", "education", "experience", "portfolio", "contacts", "feedbacks"];
+
+        // Объект-карта, где мы будем хранить актуальное состояние каждой секции (true/false)
+        const intersections = {};
+
+        const observerOptions = {
+            root: null,
+            rootMargin: "-20% 0px -60% 0px", // Зона триггера в верхней части экрана
+            threshold: 0
+        };
+
+        const observerCallback = (entries) => {
+            // 1. Записываем текущее состояние пересечения для изменившихся секций
+            entries.forEach((entry) => {
+                intersections[entry.target.id] = entry.isIntersecting;
+            });
+
+            // 2. Ищем САМУЮ ПЕРВУЮ секцию из нашего массива sectionIds, которая сейчас имеет статус true
+            const activeSection = sectionIds.find((id) => intersections[id]);
+
+            // 3. Если такая нашлась — делаем её активной в меню
+            if (activeSection) {
+                setActiveId(activeSection);
+            }
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+        // Даем небольшую паузу на инициализацию анимаций, затем вешаем обсервер
+        const timeoutId = setTimeout(() => {
+            sectionIds.forEach((id) => {
+                const el = document.getElementById(id);
+                if (el) observer.observe(el);
+            });
+        }, 100);
+
+        return () => {
+            clearTimeout(timeoutId);
+            observer.disconnect();
+        };
+    }, []);
+
     return (
-        <div className="inner-page">
-            <Panel />
+        <motion.div
+            className="inner-page"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.02 }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+        >
+            <Panel activeId={activeId} setActiveId={setActiveId} />
 
             <main className="inner-page__content">
-                <section id="about" className="inner-page__section">
+                <motion.section id="about" className="inner-page__section" {...sectionAnimation}>
                     <Box />
-                </section>
+                </motion.section>
 
-                <section id="education" className="inner-page__section">
+                <motion.section id="education" className="inner-page__section" {...sectionAnimation}>
                     <TimeLine />
-                </section>
+                </motion.section>
 
-                <section id="experience" className="inner-page__section">
+                <motion.section id="experience" className="inner-page__section" {...sectionAnimation}>
                     <Expertise title="Experience" data={expertiseMockData} />
-                </section>
+                </motion.section>
 
-                <section id="portfolio" className="inner-page__section">
+                <motion.section id="portfolio" className="inner-page__section" {...sectionAnimation}>
                     <Portfolio />
-                </section>
+                </motion.section>
 
-                <section id="contacts" className="inner-page__section">
+                <motion.section id="contacts" className="inner-page__section" {...sectionAnimation}>
                     <Address />
-                </section>
+                </motion.section>
 
-                <section id="feedbacks" className="inner-page__section">
+                <motion.section id="feedbacks" className="inner-page__section" {...sectionAnimation}>
                     <Feedback title="Feedbacks" data={feedbackData} />
-                </section>
+                </motion.section>
             </main>
 
             <BackToTop />
-        </div>
+        </motion.div>
     );
 };
 

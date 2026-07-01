@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import PhotoBox from '../../components/PhotoBox/PhotoBox';
 import Button from '../../components/Button/Button';
 import './HomePage.scss';
@@ -7,7 +8,13 @@ const HomePage = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="home-page">
+        <motion.div
+            className="home-page"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.02 }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+        >
             <div className="home-page__overlay">
                 <PhotoBox userName="John Doe" className="photo-box--large" />
 
@@ -21,7 +28,7 @@ const HomePage = () => {
                     onClick={() => navigate('/inner')}
                 />
             </div>
-        </div>
+        </motion.div>
     );
 };
 

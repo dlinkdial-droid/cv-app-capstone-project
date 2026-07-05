@@ -30,7 +30,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test:coverage": "npm test -- --coverage --watchAll=false",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prepare": "husky"
   },
   "eslintConfig": {
     "extends": [
@@ -58,6 +59,7 @@
       "src/**/*.{js,jsx,ts,tsx}",
       "!src/index.js",
       "!src/services/server.js",
+      "!src/reportWebVitals.js",
       "!**/node_modules/**"
     ],
     "coverageThreshold": {

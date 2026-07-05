@@ -1,0 +1,5 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "=== Запуск юнит-тестов перед пушем ==="
+npm test -- --watchAll=false --coverage

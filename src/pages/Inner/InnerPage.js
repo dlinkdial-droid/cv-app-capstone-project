@@ -9,6 +9,7 @@ import Portfolio from "../../components/Portfolio/Portfolio";
 import Address from "../../components/Address/Address";
 import Feedback from '../../components/Feedback/Feedback';
 import reporterAvatar from '../../assets/images/reporter_img.png';
+import Skills from "../../components/Skills/Skills";
 
 import "./InnerPage.scss";
 
@@ -21,26 +22,6 @@ const sectionAnimation = {
 
 const Inner = () => {
     const [activeId, setActiveId] = useState("about");
-
-    const expertiseMockData = [
-        {
-            date: "2013-2014",
-            info: {
-                company: "Google",
-                job: "Front-end developer / php programmer",
-                description: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
-            }
-        },
-        {
-            date: "2012",
-            info: {
-                company: "Twitter",
-                job: "Web developer",
-                description: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
-            }
-        }
-    ];
-
     const feedbackData = [
         {
             feedback: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. ",
@@ -64,7 +45,7 @@ const Inner = () => {
         // Принудительно поднимаем страницу вверх при загрузке
         window.scrollTo(0, 0);
 
-        const sectionIds = ["about", "education", "experience", "portfolio", "contacts", "feedbacks"];
+        const sectionIds = ["about", "education", "experience", "skills", "portfolio", "contacts", "feedbacks"];
 
         // Объект-карта, где мы будем хранить актуальное состояние каждой секции (true/false)
         const intersections = {};
@@ -126,7 +107,11 @@ const Inner = () => {
                 </motion.section>
 
                 <motion.section id="experience" className="inner-page__section" {...sectionAnimation}>
-                    <Expertise title="Experience" data={expertiseMockData} />
+                    <Expertise />
+                </motion.section>
+
+                <motion.section id="skills" className="inner-page__section" {...sectionAnimation}>
+                    <Skills />
                 </motion.section>
 
                 <motion.section id="portfolio" className="inner-page__section" {...sectionAnimation}>

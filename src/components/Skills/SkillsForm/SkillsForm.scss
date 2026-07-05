@@ -1,0 +1,116 @@
+@import "../../../assets/styles/variables";
+@import "../../../assets/styles/typography";
+
+.skills-form {
+    width: 100%;
+    padding: 1.25rem 0.9375rem;
+    border: 1px solid $color-shamrock;
+    border-radius: 5px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    will-change: transform, opacity;
+
+    &__row {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.25rem;
+    }
+
+    &__label {
+        font-size: 0.875rem;
+        line-height: 1.2;
+        font-weight: $weight-regular;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        font-family: inherit;
+    }
+
+    &__input-wrapper {
+        flex-grow: 1;
+        max-width: 270px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    &__input {
+        width: 100%;
+        padding: 0.625rem 0.625rem;
+        font-size: 0.75rem;
+        border: 1px solid $color-raven;
+        border-radius: 5px;
+        outline: none;
+        height: 40px;
+
+        &:focus {
+            border-color: $color-shamrock;
+        }
+
+        &--error {
+            border-color: #f44336 !important;
+        }
+
+        &::placeholder {
+            font-family: inherit;
+            font-weight: $weight-regular;
+            line-height: 1.2;
+            color: $color-raven;
+        }
+    }
+
+    &__error {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        margin-top: 0.2rem;
+        font-size: 0.75rem;
+        color: #f44336;
+        line-height: 1.1;
+        width: max-content;
+        max-width: 450px;
+        z-index: 2;
+    }
+
+    &__actions {
+        margin-top: 0.5rem;
+    }
+
+    &__submit-btn {
+        background-color: $color-oxford-blue;
+        color: white;
+        border: none;
+        font-size: 1rem;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $color-shamrock;
+        }
+
+        @media (max-width: 600px) {
+            padding: 0.625rem 1.25rem;
+
+            .custom-btn__icon {
+                margin-right: 5px;
+            }
+
+            .custom-btn__text {
+                max-width: 150px;
+                opacity: 1;
+                overflow: visible;
+            }
+        }
+
+        &:hover:not(:disabled) {
+            background-color: #5a6268;
+        }
+
+        &:disabled {
+            background-color: #6c757d;
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+    }
+}

@@ -14,14 +14,12 @@
         gap: 0.5rem;
     }
 
-    // Стилизуем элементы навигации изнутри родителя для универсальности
     li,
     [class*="navigation-item"] {
         display: flex;
         align-items: center;
         transition: justify-content 0.3s ease-in-out, padding 0.3s ease-in-out;
 
-        // Находим любой текст (включая span внутри NavigationItem) и готовим к анимации
         span,
         p,
         text,
@@ -41,7 +39,6 @@
             justify-content: center;
             padding: 10px 0;
 
-            // Плавно зажимаем и скрываем текст, оставляя только иконку
             span,
             p,
             text,

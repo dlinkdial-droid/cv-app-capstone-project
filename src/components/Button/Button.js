@@ -1,12 +1,18 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // 1. Обязательно импортируем
+import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Button.scss";
 
-const Button = ({ icon, text, onClick, type = "button" }) => {
+// 1. Добавляем className = "" в список принимаемых пропов
+const Button = ({ icon, text, onClick, type = "button", disabled = false, className = "" }) => {
     return (
-        <button type={type} className="custom-btn" onClick={onClick}>
-            {/* 2. Рендерим объект иконки через правильный компонент */}
+        <button
+            type={type}
+            className={`custom-btn ${className}`.trim()}
+            onClick={onClick}
+            disabled={disabled}
+        >
             {icon && (
-                <span className="custom-btn__icon">
+                <span className="custom-btn__icon" data-testid="button-icon">
                     <FontAwesomeIcon icon={icon} />
                 </span>
             )}

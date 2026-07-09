@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { AnimatePresence } from 'framer-motion';
 import HomePage from './pages/Home/HomePage';
 import InnerPage from './pages/Inner/InnerPage';
+import { Navigate } from 'react-router-dom';
 import './App.scss'
 
 

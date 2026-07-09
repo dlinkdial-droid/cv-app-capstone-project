@@ -2,6 +2,11 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  Navigate: () => <div data-testid="mock-navigate" />,
+}));
+
 describe('App Component Routing', () => {
 
   test('1. Успешно рендерит главную страницу (HomePage) по умолчанию', () => {

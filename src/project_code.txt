@@ -1,0 +1,3686 @@
+﻿=== FILE: \App.js ===
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
+import HomePage from './pages/Home/HomePage';
+import InnerPage from './pages/Inner/InnerPage';
+import './App.scss'
+
+
+function AnimatedRoutes() {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/inner" element={<InnerPage />} />
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
+function App() {
+  return (
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <AnimatedRoutes />
+    </Router>
+  );
+}
+
+export default App;
+
+
+=== FILE: \App.scss ===
+@import "./assets/styles/reset";
+
+
+=== FILE: \App.test.js ===
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import App from './App';
+
+describe('App Component Routing', () => {
+
+  test('1. Успешно рендерит главную страницу (HomePage) по умолчанию', () => {
+    render(<App />);
+
+    const titleElement = screen.getByText(/Programmer. Creative. Innovator/i);
+    expect(titleElement).toBeInTheDocument();
+  });
+
+  test('2. На главной странице присутствует кнопка "Know more"', () => {
+    render(<App />);
+
+    const buttonElement = screen.getByRole('button', { name: /Know more/i });
+    expect(buttonElement).toBeInTheDocument();
+  });
+
+  test('3. Текст описания (Lorem ipsum) отображается корректно', () => {
+    render(<App />);
+
+    const descriptionText = screen.getByText(/Lorem ipsum dolor sit amet/i);
+    expect(descriptionText).toBeInTheDocument();
+  });
+
+});
+
+
+=== FILE: \index.js ===
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+import makeServer from "./services/server";
+import { Provider } from 'react-redux';
+import { store } from './store/store';
+
+if (process.env.NODE_ENV === "development") {
+  makeServer();
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </React.StrictMode>
+);
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
+
+
+=== FILE: \reportWebVitals.js ===
+const reportWebVitals = onPerfEntry => {
+  if (onPerfEntry && onPerfEntry instanceof Function) {
+    import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
+      getCLS(onPerfEntry);
+      getFID(onPerfEntry);
+      getFCP(onPerfEntry);
+      getLCP(onPerfEntry);
+      getTTFB(onPerfEntry);
+    });
+  }
+};
+
+export default reportWebVitals;
+
+
+=== FILE: \setupTests.js ===
+// jest-dom adds custom jest matchers for asserting on DOM nodes.
+// allows you to do things like:
+// expect(element).toHaveTextContent(/react/i)
+// learn more: https://github.com/testing-library/jest-dom
+import '@testing-library/jest-dom';
+
+// Заглушка для window.scrollTo, чтобы убрать ошибку JSDOM в консоли
+window.scrollTo = jest.fn();
+
+
+=== FILE: \assets\styles\_reset.scss ===
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+=== FILE: \assets\styles\_typography.scss ===
+@import "./variables";
+
+
+@mixin text-title-1 {
+    font-family: $font-main;
+    font-size: 1.5625rem;
+    font-weight: $weight-bold;
+    line-height: 1.2;
+    color: $color-shamrock;
+}
+
+
+@mixin text-content {
+    font-family: $font-main;
+    font-size: 0.875rem;
+    font-weight: $weight-regular;
+    line-height: 1.5;
+    color: $color-oxford-blue
+}
+
+
+// button component mixins
+@mixin text-button($font-size: 1rem) {
+    font-family: $font-main;
+    font-size: $font-size;
+    font-weight: $weight-regular;
+    color: $color-white;
+    line-height: 1.2;
+}
+
+// expertise component mixins
+@mixin text-heading-sm {
+    font-family: $font-main;
+    font-size: 1rem; // 16px
+    font-weight: $weight-bold;
+    line-height: 1.2;
+    color: $color-oxford-blue;
+}
+
+@mixin text-body ($font-size: 0.875rem, $lh: 1.5) {
+    font-family: $font-main;
+    font-size: $font-size;
+    font-weight: $weight-regular;
+    line-height: $lh;
+    color: $color-raven;
+}
+
+
+=== FILE: \assets\styles\_variables.scss ===
+$font-main: 'Open Sans', sans-serif;
+
+
+$weight-regular: 400;
+$weight-semibold: 600;
+$weight-bold: 700;
+
+
+$color-midnight: #0b132b;
+$color-oxford-blue: #1c2541;
+$color-shamrock: #26C17E;
+$color-raven: #5c677d;
+$color-gallery: #EEEEEE;
+$color-alto: #d1d5db;
+$color-white: #ffffff;
+$color-black: #000000;
+
+
+=== FILE: \components\Address\Address.js ===
+import React from 'react';
+import { faPhone, faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { faTwitter, faFacebook, faSkype } from '@fortawesome/free-brands-svg-icons';
+import './Address.scss';
+import AddressItem from './AddressItem/AddressItem';
+
+const Address = () => {
+    const contacts = [
+        { id: 'phone', icon: faPhone, link: <a href="tel:+500342242">500 342 242</a> },
+        { id: 'email', icon: faEnvelope, link: <a href="mailto:office@kamsolutions.pl">office@kamsolutions.pl</a> },
+        { id: 'twitter', icon: faTwitter, label: 'Twitter', link: <a href="https://twitter.com/wordpress" target="_blank" rel="noopener noreferrer">https://twitter.com/wordpress</a> },
+        { id: 'facebook', icon: faFacebook, label: 'Facebook', link: <a href="https://www.facebook.com/facebook" target="_blank" rel="noopener noreferrer">https://facebook.com/facebook</a> },
+        { id: 'skype', icon: faSkype, label: 'Skype', link: <a href="skype:kamsolutions.pl?chat">kamsolutions.pl</a> }
+    ];
+
+    return (
+        <section className="address-section">
+            <h2 className="address-section__title">Contacts</h2>
+            <address className="address">
+                {contacts.map((item) => (
+                    <AddressItem
+                        key={item.id}
+                        icon={item.icon}
+                        label={item.label}
+                        link={item.link}
+                    />
+                ))}
+            </address>
+        </section>
+    );
+};
+
+export default Address;
+
+
+=== FILE: \components\Address\Address.scss ===
+@import "../../assets/styles/typography";
+@import "../../assets/styles/variables";
+
+.address-section {
+    width: 100%;
+
+    &__title {
+        @include text-title-1;
+        margin-bottom: 2.5rem;
+    }
+}
+
+.address {
+    font-style: normal;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    width: 100%;
+}
+
+
+=== FILE: \components\Address\AddressItem\AddressItem.js ===
+import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import './AddressItem.scss';
+
+const AddressItem = ({ icon, label, link }) => {
+    return (
+        <dl className="address__item">
+            <dt className="address__icon">
+                <FontAwesomeIcon icon={icon} />
+            </dt>
+            <dd className="address__details">
+                {label ? (
+                    // Сценарий для соцсетей: Заголовок жирный, ссылка обычная
+                    <>
+                        <strong className="address__label">{label}</strong>
+                        <br />
+                        {link}
+                    </>
+                ) : (
+                    // Сценарий для телефона/почты: Ссылка жирная сама по себе
+                    <span className="address__link-bold">{link}</span>
+                )}
+            </dd>
+        </dl>
+    );
+};
+
+export default AddressItem;
+
+
+=== FILE: \components\Address\AddressItem\AddressItem.scss ===
+@import "../../../assets/styles/variables";
+
+.address__item {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+}
+
+.address__icon {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    svg {
+        color: $color-shamrock;
+        width: 30px;
+        height: 30px;
+        display: block;
+    }
+}
+
+.address__details {
+    margin: 0;
+    padding: 0;
+    font-size: 1rem;
+    line-height: 1.2;
+    word-break: break-all;
+
+    // Стили для случая с label (Twitter/Facebook/Skype)
+    .address__label {
+        font-weight: 700;
+        color: #000;
+    }
+
+    // Стили для случая БЕЗ label (Телефон/Почта)
+    .address__link-bold {
+        font-weight: 700;
+
+        a {
+            color: #000; // Черный цвет для жирных ссылок
+        }
+    }
+
+    a {
+        color: #2c3e50;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+
+=== FILE: \components\Address\AddressItem\AddressItem.test.js ===
+import React from 'react';
+import { render } from '@testing-library/react';
+import AddressItem from './AddressItem';
+
+describe('AddressItem Component', () => {
+    test('renders without crashing', () => {
+        const { container } = render(<AddressItem icon="phone" text="123" />);
+        expect(container.firstChild).toBeInTheDocument();
+    });
+});
+
+
+=== FILE: \components\BackToTop\BackToTop.js ===
+import React, { useState, useEffect } from 'react';
+import './BackToTop.scss';
+
+const BackToTop = () => {
+    const [isVisible, setIsVisible] = useState(false);
+
+    // Логика появления кнопки при скролле
+    const toggleVisibility = () => {
+        if (window.scrollY > 300) {
+            setIsVisible(true);
+        } else {
+            setIsVisible(false);
+        }
+    };
+
+    useEffect(() => {
+        window.addEventListener('scroll', toggleVisibility);
+        return () => window.removeEventListener('scroll', toggleVisibility);
+    }, []);
+
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
+
+    return (
+        <button
+            className={`back-to-top ${isVisible ? 'show' : ''}`}
+            onClick={scrollToTop}
+            aria-label="Back to top"
+        >
+            {/* Можно вставить иконку стрелки или текст */}
+            ↑
+        </button>
+    );
+};
+
+export default BackToTop;
+
+
+=== FILE: \components\BackToTop\BackToTop.scss ===
+@import "../../assets/styles/typography";
+@import "../../assets/styles/variables";
+
+.back-to-top {
+    position: fixed;
+    bottom: 0px;
+    right: 2.25rem;
+    width: 1.875rem;
+    height: 1.875rem;
+    background-color: $color-oxford-blue;
+    color: white;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 1000;
+
+    &.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    &:hover {
+        background-color: #27ae60;
+    }
+}
+
+
+=== FILE: \components\Box\Box.js ===
+import "./Box.scss";
+
+const Box = ({ title, content }) => {
+    return (
+        <section className="box-card">
+            <h2 className="box-card__title">About me</h2>
+            <div className="box-card__content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque</div>
+        </section>
+    )
+}
+
+export default Box
+
+
+=== FILE: \components\Box\Box.scss ===
+@import "../../assets/styles/typography";
+@import "../../assets/styles/variables";
+
+.box-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+
+    &__title {
+        @include text-title-1;
+        margin-bottom: 24px;
+    }
+
+    &__content {
+        @include text-content;
+    }
+}
+
+
+=== FILE: \components\Box\Box.test.js ===
+import React from 'react';
+import { render } from '@testing-library/react';
+import Box from './Box';
+
+describe('Box Component', () => {
+    test('renders without crashing', () => {
+        const { container } = render(<Box title="Test" />);
+        expect(container.firstChild).toBeInTheDocument();
+    });
+});
+
+
+=== FILE: \components\Button\Button.js ===
+import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import "./Button.scss";
+
+// 1. Добавляем className = "" в список принимаемых пропов
+const Button = ({ icon, text, onClick, type = "button", disabled = false, className = "" }) => {
+    return (
+        <button
+            type={type}
+            className={`custom-btn ${className}`.trim()}
+            onClick={onClick}
+            disabled={disabled}
+        >
+            {icon && (
+                <span className="custom-btn__icon" data-testid="button-icon">
+                    <FontAwesomeIcon icon={icon} />
+                </span>
+            )}
+            {text && <span className="custom-btn__text">{text}</span>}
+        </button>
+    );
+};
+
+export default Button;
+
+
+=== FILE: \components\Button\Button.scss ===
+@import "../../assets/styles/typography";
+@import "../../assets/styles/variables";
+
+.custom-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 1.25rem;
+    background-color: $color-oxford-blue;
+    border: 1px solid $color-oxford-blue;
+    border-radius: 5px;
+    cursor: pointer;
+
+
+    // ПЛАВНОСТЬ: добавляем паддинги в анимацию для красивого сжатия кнопки на мобилках
+    transition: background-color 0.2s ease, border-color 0.2s ease, padding 0.3s ease-in-out;
+
+    //Ховер сработает ТОЛЬКО на компах/ноутбуках с мышкой
+    @media (hover: hover) {
+        &:hover {
+            background-color: $color-shamrock;
+            border-color: $color-shamrock;
+        }
+    }
+
+    // ЭФФЕКТ ДЛЯ МОБИЛОК: Сработает в момент короткого зажатия пальцем (активное состояние)
+    &:active {
+        // Делаем цвет чуть темнее основного зеленого или берем другой цвет для тапа
+        background-color: darken($color-shamrock, 5%);
+        border-color: darken($color-shamrock, 5%);
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        margin-right: 5px;
+        color: $color-white;
+        // ПЛАВНОСТЬ: чтобы маргин исчезал без рывков
+        transition: margin-right 0.3s ease-in-out;
+
+        svg {
+            width: 14px;
+            height: 14px;
+        }
+    }
+
+    &__text {
+        @include text-button(0.875rem);
+
+        // ПЛАВНОСТЬ: готовим текст кнопки к плавному схлопыванию
+        max-width: 150px;
+        opacity: 1;
+        display: inline-block;
+        white-space: nowrap;
+        transition: max-width 0.3s ease-in-out, opacity 0.2s ease-in-out;
+    }
+
+    // ИНТЕГРАЦИЯ С СЖАТОЙ ПАНЕЛЬЮ (< 600px)
+    @media (max-width: 600px) {
+        padding: 0.625rem; // Делаем кнопку компактным квадратом вокруг иконки
+
+        &__icon {
+            margin-right: 0; // На мобилке текста нет, убираем правый отступ у иконки
+        }
+
+        &__text {
+            max-width: 0; // Плавно сжимаем текст кнопки в ноль
+            opacity: 0; // Растворяем его
+            overflow: hidden; // Скрываем остатки букв
+        }
+    }
+}
+
+
+=== FILE: \components\Button\Button.test.js ===
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import Button from './Button';
+import { faPen } from '@fortawesome/free-solid-svg-icons'; // Берем любую иконку для теста
+
+describe('Button Component', () => {
+    // Тест 1: Проверка рендера текста через пропс
+    test('renders button with correct text prop', () => {
+        render(<Button text="Save Skill" />);
+        const textElement = screen.getByText('Save Skill');
+        expect(textElement).toBeInTheDocument();
+    });
+
+    // Тест 2: Проверка клика
+    test('calls onClick handler when clicked', () => {
+        const handleClick = jest.fn();
+        render(<Button text="Click" onClick={handleClick} />);
+
+        const buttonElement = screen.getByRole('button');
+        fireEvent.click(buttonElement);
+
+        expect(handleClick).toHaveBeenCalledTimes(1);
+    });
+
+    // Тест 3: Проверка блокировки кнопки (теперь точно сработает!)
+    test('is disabled when disabled prop is true', () => {
+        render(<Button text="Submit" disabled={true} />);
+
+        const buttonElement = screen.getByRole('button');
+        expect(buttonElement).toBeDisabled();
+    });
+
+    // Тест 4: Проверка рендера иконки FontAwesome
+    test('renders icon when icon prop is provided', () => {
+        render(<Button text="Edit" icon={faPen} />);
+
+        // Ищем иконку по добавленному нами data-testid
+        const iconContainer = screen.getByTestId('button-icon');
+        expect(iconContainer).toBeInTheDocument();
+    });
+
+    // Тест 5: Проверка, что без текста спан с классом не рендерится
+    test('does not render text span if text prop is missing', () => {
+        // Забираем container из рендера для поиска по классам
+        const { container } = render(<Button icon={faPen} />);
+
+        const textElement = container.querySelector('.custom-btn__text');
+        // Элемент не должен быть найден (должен быть null)
+        expect(textElement).toBeNull();
+    });
+});
+
+
+=== FILE: \components\Error\Error.js ===
+import React from 'react';
+import './Error.scss';
+
+const Error = ({ message = 'Something went wrong; please review your server connection!' }) => {
+    return (
+        <div className="custom-error">
+            <p className="custom-error__text">{message}</p>
+        </div>
+    );
+};
+
+export default Error;
+
+
+=== FILE: \components\Error\Error.scss ===
+.custom-error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2.5rem 0;
+    width: 100%;
+
+    &__text {
+        color: #ff4d4f;
+        font-size: 1rem;
+        font-weight: 400;
+        text-align: center;
+        margin: 0;
+        line-height: 1.2;
+    }
+}
+
+
+=== FILE: \components\Error\Error.test.js ===
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import Error from './Error';
+
+describe('Error Component', () => {
+    test('renders error message correctly', () => {
+        render(<Error message="Критическая ошибка" />);
+        expect(screen.getByText('Критическая ошибка')).toBeInTheDocument();
+    });
+});
+
+
+=== FILE: \components\Expertise\Expertise.js ===
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchExperience } from '../../store/thunks/experienceThunks'; // Проверь путь до танков
+import ExpertiseItem from "./ExpertiseItem/ExpertiseItem";
+import Loader from "../Loader/Loader"; // Проверь путь до Лоадера
+import Error from "../Error/Error";   // Проверь путь до Ошибки
+import "./Expertise.scss";
+
+const Expertise = () => {
+    const dispatch = useDispatch();
+
+    // Забираем данные, статус и ошибку напрямую из слайса experience
+    const { items: data, status, error } = useSelector((state) => state.experience);
+
+    useEffect(() => {
+        if (status === 'idle') {
+            dispatch(fetchExperience());
+        }
+    }, [status, dispatch]);
+
+    return (
+        <section className="expertise">
+            <h2 className="expertise__title">Experience</h2>
+
+            {/* Логика экранов загрузки и ошибки */}
+            {status === 'loading' && <Loader />}
+            {status === 'failed' && <Error message={error} />}
+
+            {/* Успешный рендер списка */}
+            {status === 'succeeded' && (
+                <ul className="expertise-list">
+                    {data.map((item, index) => (
+                        <ExpertiseItem key={item.id || index} item={item} />
+                    ))}
+                </ul>
+            )}
+        </section>
+    );
+};
+
+export default Expertise;
+
+
+=== FILE: \components\Expertise\Expertise.scss ===
+@import "../../assets/styles/typography";
+@import "../../assets/styles/variables";
+
+.expertise {
+
+    &__title {
+        @include text-title-1;
+        margin-bottom: 2.5rem;
+    }
+}
+
+.expertise-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.875rem;
+}
+
+
+=== FILE: \components\Expertise\ExpertiseItem\ExpertiseItem.js ===
+import './ExpertiseItem.scss'
+
+const ExpertiseItem = ({ item }) => {
+    return (
+        <li className="expertise-item">
+            <div className="expertise-item__sidebar">
+                <strong className="expertise-item__company">{item.info.company}</strong>
+                <span className="expertise-item__date">{item.date}</span>
+            </div>
+            <div className="expertise-item__main">
+                <h3 className="expertise-item__job">{item.info.job}</h3>
+                <p className="expertise-item__description">{item.info.description}</p>
+            </div>
+        </li>
+    );
+};
+
+export default ExpertiseItem;
+
+
+=== FILE: \components\Expertise\ExpertiseItem\ExpertiseItem.scss ===
+@import "../../../assets/styles/typography";
+@import "../../../assets/styles/variables";
+
+.expertise-item {
+    display: flex;
+    align-items: flex-start;
+
+    &__sidebar {
+        display: flex;
+        flex-direction: column;
+        width: 30%; // Фиксированная левая колонка (компания + дата)
+        padding-right: 1.875rem;
+    }
+
+    &__main {
+        display: flex;
+        flex-direction: column;
+        width: 70%; // Правая колонка под контент (должность + описание)
+    }
+
+    &__company {
+        @include text-heading-sm; // Сработает дефолтный $color-oxford-blue
+        margin-bottom: 0.3125rem;
+    }
+
+    &__date {
+        @include text-body(1rem, 1.2);
+    }
+
+    &__job {
+        @include text-heading-sm; // Снова дефолтный 16px bold
+        margin-bottom: 0.3125rem;
+    }
+
+    &__description {
+        @include text-body;
+        color: $color-oxford-blue;
+    }
+}
+
+
+=== FILE: \components\Feedback\Feedback.js ===
+import FeedbackItem from "./FeedbackItem/FeedbackItem";
+import "./Feedback.scss";
+
+const Feedback = ({ title, data }) => {
+    return (
+        <section className="feedback">
+            <h2 className="feedback__title">{title}</h2>
+            <ul className="feedback__list">
+                {data.map((item, index) => (
+                    <li key={index} className="feedback__item-wrapper">
+                        <FeedbackItem item={item} />
+                    </li>
+                ))}
+            </ul>
+        </section>
+    );
+};
+
+export default Feedback;
+
+
+=== FILE: \components\Feedback\Feedback.scss ===
+@import "../../assets/styles/typography";
+@import "../../assets/styles/variables";
+
+.feedback {
+    // margin-bottom: 2.5rem;
+
+    &__title {
+        @include text-title-1;
+        margin-bottom: 1.5rem;
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem; // Отступ между отзывами
+    }
+}
+
+
+=== FILE: \components\Feedback\FeedbackItem\FeedbackItem.js ===
+import "./FeedbackItem.scss";
+
+const FeedbackItem = ({ item }) => {
+    return (
+        <figure className="feedback-item">
+            <blockquote className="feedback-item__content">
+                <p>{item.feedback}</p>
+            </blockquote>
+            <figcaption className="feedback-item__reporter">
+                <img
+                    src={item.reporter.photoUrl}
+                    alt={item.reporter.name}
+                    className="feedback-item__avatar"
+                />
+                <div className="feedback-item__meta">
+                    <span className="feedback-item__name">{item.reporter.name},</span>
+                    <a
+                        href={item.reporter.citeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="feedback-item__link"
+                    >
+                        <cite>{item.reporter.citeUrl.replace("https://www.", "")}</cite>
+                    </a>
+                </div>
+            </figcaption>
+        </figure>
+    );
+};
+
+export default FeedbackItem;
+
+
+=== FILE: \components\Feedback\FeedbackItem\FeedbackItem.scss ===
+@import "../../../assets/styles/typography";
+@import "../../../assets/styles/variables";
+
+.feedback-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+
+    &__content {
+        padding: 0.84375rem 0.9375rem;
+        background-color: $color-gallery ;
+
+        p {
+            @include text-body;
+            color: $color-oxford-blue;
+        }
+    }
+
+    &__reporter {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem; // Отступ между аватаркой и текстом автора
+    }
+
+    &__avatar {
+        width: 3.125rem;
+        height: 3.125rem;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    &__meta {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        @include text-body;
+    }
+
+    &__name {
+        font-weight: $weight-regular;
+        color: $color-oxford-blue;
+    }
+
+    &__link {
+        color: $color-shamrock;
+
+        &:hover {
+            text-decoration: underline;
+        }
+
+        cite {
+            font-style: normal; // Отменяем дефолтный курсив тега <cite>
+        }
+    }
+}
+
+
+=== FILE: \components\Feedback\FeedbackItem\FeedbackItem.test.js ===
+import { render, screen } from '@testing-library/react';
+import FeedbackItem from './FeedbackItem';
+
+describe('FeedbackItem Component', () => {
+    test('renders without crashing', () => {
+        const mockItem = {
+            feedback: 'Отличный код, всё работает!',
+            reporter: {
+                name: 'John Doe',
+                photoUrl: 'https://via.placeholder.com/150',
+                citeUrl: 'https://www.github.com/johndoe'
+            }
+        };
+
+        render(<FeedbackItem item={mockItem} />);
+
+        // Базовая проверка, что имя отрендерилось
+        expect(screen.getByText(/John Doe/i)).toBeInTheDocument();
+    });
+});
+
+
+=== FILE: \components\Info\Info.js ===
+// Info.jsx
+import React from 'react';
+import './Info.scss';
+
+const Info = ({ title, content, className = '' }) => {
+    return (
+        <div className={`info ${className}`.trim()}>
+            <h3 className="info__title">{title}</h3>
+            <p className="info__content">{content}</p>
+        </div>
+    );
+};
+
+export default Info;
+
+
+=== FILE: \components\Info\Info.scss ===
+@import "../../assets/styles/typography";
+@import "../../assets/styles/variables";
+
+.info {
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 0.5625rem;
+    padding: 0.9375rem;
+    gap: 0.9375rem;
+    background-color: $color-gallery;
+
+
+
+    &__title {
+        @include text-title-1;
+        font-size: 1rem;
+        color: $color-oxford-blue;
+
+    }
+
+
+    &__content {
+        @include text-body;
+        color: $color-oxford-blue;
+    }
+}
+
+
+=== FILE: \components\Loader\Loader.js ===
+import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSyncAlt } from '@fortawesome/free-solid-svg-icons'; // Те самые две стрелки
+import './Loader.scss';
+
+const Loader = () => {
+    return (
+        <div className="custom-loader">
+            <FontAwesomeIcon icon={faSyncAlt} className="custom-loader__spinner" />
+        </div>
+    );
+};
+
+export default Loader;
+
+
+=== FILE: \components\Loader\Loader.scss ===
+@import "../../assets/styles/variables";
+
+.custom-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 0;
+    width: 100%;
+
+    &__spinner {
+        font-size: 0.875rem;
+        color: $color-shamrock;
+        animation: loader-spin 1.2s linear infinite;
+    }
+}
+
+@keyframes loader-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+=== FILE: \components\Loader\Loader.test.js ===
+import React from 'react';
+import { render } from '@testing-library/react';
+import Loader from './Loader';
+
+describe('Loader Component', () => {
+    test('успешно рендерит компонент лоадера', () => {
+        // Используем container для поиска по CSS-классу
+        const { container } = render(<Loader />);
+        const loaderElement = container.querySelector('.custom-loader');
+
+        expect(loaderElement).toBeInTheDocument();
+    });
+});
+
+
+=== FILE: \components\Navigation\Navigation.js ===
+import React from 'react';
+import {
+    faUser,
+    faGraduationCap,
+    faPen,
+    faGem,
+    faBriefcase,
+    faPaperPlane,
+    faComment
+} from '@fortawesome/free-solid-svg-icons';
+import NavigationItem from "./NavigationItem/NavigationItem";
+import "./Navigation.scss";
+
+const Navigation = ({ activeId, setActiveId }) => {
+    const navItems = [
+        { id: "about", label: "About me", icon: faUser },
+        { id: "education", label: "Education", icon: faGraduationCap },
+        { id: "experience", label: "Experience", icon: faPen },
+        { id: "skills", label: "Skills", icon: faGem },
+        { id: "portfolio", label: "Portfolio", icon: faBriefcase },
+        { id: "contacts", label: "Contacts", icon: faPaperPlane },
+        { id: "feedbacks", label: "Feedbacks", icon: faComment }
+    ];
+
+    return (
+        <nav className="navigation">
+            <ul className="navigation__list">
+                {navItems.map((item) => (
+                    <NavigationItem
+                        key={item.id}
+                        icon={item.icon}
+                        label={item.label}
+                        href={`#${item.id}`}
+                        status={activeId === item.id ? "selected" : "default"}
+                        onClick={() => {
+                            setActiveId(item.id); // 1. Мгновенно ставим активный ID
+
+                            const targetSection = document.getElementById(item.id);
+                            if (targetSection) {
+                                targetSection.scrollIntoView({ behavior: "smooth", block: "start" }); // 2. Начинаем плавный скролл
+                            }
+                        }}
+                    />
+                ))}
+            </ul>
+        </nav>
+    );
+};
+
+export default Navigation;
+
+
+=== FILE: \components\Navigation\Navigation.scss ===
+@import "../../assets/styles/variables";
+
+.navigation {
+
+    width: 100%;
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        gap: 0.5rem;
+    }
+
+    li,
+    [class*="navigation-item"] {
+        display: flex;
+        align-items: center;
+        transition: justify-content 0.3s ease-in-out, padding 0.3s ease-in-out;
+
+        span,
+        p,
+        text,
+        [class*="__text"] {
+            max-width: 200px;
+            opacity: 1;
+            display: inline-block;
+            white-space: nowrap;
+            transition: max-width 0.3s ease-in-out, opacity 0.2s ease-in-out;
+        }
+    }
+
+    @media (max-width: 600px) {
+
+        li,
+        [class*="navigation-item"] {
+            justify-content: center;
+            padding: 10px 0;
+
+            span,
+            p,
+            text,
+            [class*="__text"] {
+                max-width: 0;
+                opacity: 0;
+                overflow: hidden;
+            }
+        }
+    }
+}
+
+
+=== FILE: \components\Navigation\NavigationItem\NavigationItem.js ===
+import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import "./NavigationItem.scss";
+
+const NavigationItem = ({ label, icon, status, href, onClick }) => {
+    return (
+        <li className="navigation-item">
+            <a
+                href={href}
+                className={`navigation-item__link ${status === "selected" ? "navigation-item__link--selected" : ""}`}
+                onClick={(e) => {
+                    e.preventDefault();
+                    onClick();
+                }}
+            >
+                <FontAwesomeIcon icon={icon} className="navigation-item__icon" />
+                <span className="navigation-item__text">{label}</span>
+            </a>
+        </li>
+    );
+};
+
+export default NavigationItem;
+
+
+=== FILE: \components\Navigation\NavigationItem\NavigationItem.scss ===
+@import "../../../assets/styles/typography";
+@import "../../../assets/styles/variables";
+
+.navigation-item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%; // Чтобы элемент занимал всю ширину списка
+
+    &__link {
+        display: flex;
+        align-items: center;
+        width: 100%; // Растягиваем на всю ширину панели для правильной центровки
+        padding: 1.125rem 1.25rem;
+        gap: 1.25rem;
+        color: $color-raven;
+
+        // ПЛАВНОСТЬ: добавляем анимацию для gap и padding при переходе на мобилку
+        transition: color 0.2s ease, gap 0.3s ease-in-out, padding 0.3s ease-in-out;
+
+        &:hover {
+            color: white;
+        }
+
+        &--selected {
+            color: $color-shamrock;
+
+            &:hover {
+                color: $color-shamrock;
+            }
+        }
+    }
+
+    &__icon {
+        height: 0.875rem;
+        width: 0.875rem;
+        color: inherit;
+        flex-shrink: 0; // Гарантируем, что иконка не сплющится
+    }
+
+    &__text {
+        @include text-body(1rem, 1.2);
+        color: inherit;
+
+        // ПЛАВНОСТЬ: готовим текст к красивому исчезновению
+        max-width: 200px; // Заведомо больше, чем длина текста
+        opacity: 1;
+        display: inline-block;
+        white-space: nowrap;
+        transition: max-width 0.3s ease-in-out, opacity 0.2s ease-in-out;
+    }
+
+    // АДАПТИВ ДЛЯ МОБИЛОК (Экран < 600px)
+    @media (max-width: 600px) {
+        &__link {
+            justify-content: center; // Иконка встанет строго по центру
+            padding: 1.125rem 0; // Схлопываем боковые паддинги
+            gap: 0; // УБИРАЕТ тот самый отступ справа от иконки!
+        }
+
+        &__text {
+            max-width: 0; // Плавно зажимаем текст по ширине
+            opacity: 0; // Плавно растворяем в воздухе
+            overflow: hidden; // Прячем то, что не влезло
+        }
+    }
+}
+
+
+=== FILE: \components\Panel\Panel.js ===
+import { useState } from "react";
+import Navigation from "../Navigation/Navigation";
+import PhotoBox from "../PhotoBox/PhotoBox";
+import Button from "../Button/Button";
+import { faBars, faAngleLeft } from "@fortawesome/free-solid-svg-icons";
+import "./Panel.scss";
+import { useNavigate } from "react-router-dom";
+
+const Panel = ({ activeId, setActiveId }) => {
+    const [isCollapsed, setIsCollapsed] = useState(false);
+    const navigate = useNavigate();
+
+    return (
+        <aside className={`panel ${isCollapsed ? "panel--collapsed" : ""}`}>
+
+            <div className="panel__content">
+                <PhotoBox userName="John Doe" />
+
+                <Navigation activeId={activeId} setActiveId={setActiveId} />
+
+                <div className="panel__footer">
+                    <Button
+                        icon={faAngleLeft}
+                        text="Go back"
+                        onClick={() => navigate('/')}
+                    />
+                </div>
+            </div>
+
+            <div className="panel__handle">
+                <Button
+                    icon={faBars}
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                />
+            </div>
+
+        </aside>
+    );
+};
+
+export default Panel;
+
+
+=== FILE: \components\Panel\Panel.scss ===
+@import "../../assets/styles/variables";
+
+$panel-width-desktop: 15.625rem; // 250px
+$panel-width-mobile: 3.375rem; // 54px
+
+.panel {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    z-index: 100;
+    display: flex;
+    flex-direction: row;
+
+    transition: margin-left 0.3s ease-in-out;
+
+    &__content {
+        width: $panel-width-desktop;
+        height: 100%;
+        background-color: $color-oxford-blue;
+        padding: 2.5rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        box-sizing: border-box;
+        transition: width 0.3s ease-in-out, padding 0.3s ease-in-out;
+    }
+
+    &__handle {
+        width: 30px;
+        height: 100%;
+        background-color: transparent;
+        padding-top: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        pointer-events: none;
+
+        .custom-btn {
+            width: 30px;
+            height: 30px;
+            background: $color-oxford-blue;
+            border: none;
+            color: $color-white;
+            padding: 0;
+            cursor: pointer;
+            border-radius: 0 4px 4px 0;
+            pointer-events: auto;
+            transition: background-color 0.2s ease;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &__icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0;
+
+                svg {
+                    width: 12px;
+                    height: 12px;
+                }
+            }
+        }
+    }
+
+    &__footer {
+        margin-top: auto;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+
+        .custom-btn {
+            transition: padding 0.3s ease-in-out, background-color 0.2s ease;
+            // gap: 0.625rem;
+
+            &__text {
+                max-width: 150px;
+                opacity: 1;
+                white-space: nowrap;
+                overflow: hidden;
+                transition: max-width 0.3s ease-in-out, opacity 0.2s ease-in-out;
+            }
+
+            &__icon {
+                display: flex;
+                align-items: center;
+                transition: margin-right 0.3s ease-in-out;
+
+                svg {
+                    width: 8px;
+                    height: 14px;
+                }
+            }
+        }
+    }
+
+    &--collapsed {
+        margin-left: -$panel-width-desktop;
+    }
+
+    @media (max-width: 600px) {
+        &__content {
+            width: $panel-width-mobile;
+            padding: 2rem 0.5rem;
+            align-items: center;
+        }
+
+        &--collapsed {
+            margin-left: -$panel-width-mobile;
+        }
+
+        &__footer {
+            .custom-btn {
+                padding: 0.625rem;
+
+                &__text {
+                    max-width: 0;
+                    opacity: 0;
+                }
+
+                &__icon {
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+}
+
+
+=== FILE: \components\PhotoBox\PhotoBox.js ===
+import "./PhotoBox.scss";
+import avatar from "../../assets/images/avatar.png";
+
+const PhotoBox = ({ userName, className }) => {
+    return (
+        <figure className={`photo-box ${className || ""}`}>
+            <img src={avatar} alt={userName} className="photo-box__image" />
+            <figcaption className="photo-box__name">{userName}</figcaption>
+        </figure>
+    );
+};
+
+export default PhotoBox;
+
+
+=== FILE: \components\PhotoBox\PhotoBox.scss ===
+@import "../../assets/styles/typography";
+@import "../../assets/styles/variables";
+
+.photo-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.625rem;
+    transition: gap 0.3s ease-in-out;
+
+    &__image {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid $color-white;
+        // Плавное изменение размеров круга
+        transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
+    }
+
+    &__name {
+        @include text-body(1rem, 1.2);
+        color: $color-white;
+        font-weight: $weight-bold;
+        text-align: center;
+        max-height: 50px;
+        opacity: 1;
+        // Плавное скрытие текста
+        transition: max-height 0.3s ease-in-out, opacity 0.2s ease-in-out;
+    }
+
+    @media (max-width: 600px) {
+        gap: 0;
+
+        &__image {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0; //  держит круглую форму
+        }
+
+        &__name {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+    }
+}
+
+
+=== FILE: \components\Portfolio\Portfolio.js ===
+import { useEffect, useRef, useState, Fragment } from "react";
+import Isotope from "isotope-layout";
+import "./Portfolio.scss";
+import PortfolioCard from "./PortfolioCard/PortfolioCard";
+import FilterTab from "./FilterTab/FilterTab"
+
+const TABS_CONFIG = [
+    { id: "all", label: "All", filterKey: "*" },
+    { id: "code", label: "Code", filterKey: "code" },
+    { id: "ui", label: "UI", filterKey: "ui" }
+];
+
+const PORTFOLIO_DATA = [
+    {
+        id: 1,
+        category: "ui",
+        imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop&q=60",
+        title: "Some text",
+        description: "Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis.",
+        linkUrl: "#"
+    },
+    {
+        id: 2,
+        category: "code",
+        imageUrl: "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?w=500&auto=format&fit=crop&q=60",
+        title: "LMS Platform",
+        description: "In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis vesti bulum.",
+        linkUrl: "#"
+    },
+    {
+        id: 3,
+        category: "ui",
+        imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop&q=60",
+        title: "UI Magnifier",
+        description: "Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a.",
+        linkUrl: "#"
+    },
+    {
+        id: 4,
+        category: "code",
+        imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=500&auto=format&fit=crop&q=60",
+        title: "Clean Code base",
+        description: "Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi.",
+        linkUrl: "#"
+    }
+];
+
+const Portfolio = () => {
+    const gridRef = useRef(null);
+    const isotopeRef = useRef(null);
+    const [activeFilter, setActiveFilter] = useState("*");
+
+    useEffect(() => {
+        if (gridRef.current) {
+            isotopeRef.current = new Isotope(gridRef.current, {
+                itemSelector: ".portfolio__item",
+                layoutMode: "masonry",
+                percentPosition: true, // Сетка корректно перестраивается в процентах
+                masonry: {
+                    columnWidth: ".portfolio__item"
+                },
+                transitionDuration: "0.4s"
+            });
+        }
+
+        // Железобетонный пересчет геометрии при изменении ширины экрана
+        const handleResize = () => {
+            if (isotopeRef.current) {
+                isotopeRef.current.layout();
+            }
+        };
+
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+            if (isotopeRef.current) {
+                isotopeRef.current.destroy();
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (isotopeRef.current) {
+            if (activeFilter === "*") {
+                isotopeRef.current.arrange({ filter: "*" });
+            } else {
+                isotopeRef.current.arrange({ filter: `.${activeFilter}` });
+            }
+        }
+    }, [activeFilter]);
+
+    return (
+        <section className="portfolio">
+            <h2 className="portfolio__title">Portfolio</h2>
+
+            <div className="portfolio__tabs">
+                {TABS_CONFIG.map((tab, index) => (
+                    <Fragment key={tab.id}>
+                        <FilterTab
+                            label={tab.label}
+                            isActive={activeFilter === tab.filterKey}
+                            onClick={() => setActiveFilter(tab.filterKey)}
+                        />
+                        {index < TABS_CONFIG.length - 1 && (
+                            <span className="portfolio__tab-separator">/</span>
+                        )}
+                    </Fragment>
+                ))}
+            </div>
+
+            <div className="portfolio__grid" ref={gridRef}>
+                {PORTFOLIO_DATA.map((item) => (
+                    <div key={item.id} className={`portfolio__item ${item.category}`}>
+                        <PortfolioCard {...item} />
+                    </div>
+                ))}
+            </div>
+        </section>
+    );
+};
+
+export default Portfolio;
+
+
+=== FILE: \components\Portfolio\Portfolio.scss ===
+@import "../../assets/styles/variables";
+@import "../../assets/styles/typography";
+
+.portfolio {
+    width: 100%;
+
+    &__title {
+        @include text-title-1;
+        margin-bottom: 2.5rem;
+    }
+
+    &__tabs {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.25rem;
+        font-weight: $weight-regular;
+        font-size: 1rem;
+        font-family: $font-main;
+    }
+
+    &__tab {
+        background: none;
+        border: none;
+        padding: 0;
+        font-size: 1rem;
+        color: $color-oxford-blue;
+        cursor: pointer;
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: white;
+        }
+
+        &--active {
+            color: $color-shamrock;
+
+            &:hover {
+                color: $color-shamrock;
+            }
+        }
+    }
+
+    &__grid {
+        width: 100%;
+        // Используем 1.25rem (твой отступ) для компенсации
+        margin-right: -1.25rem;
+
+        &::after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+    }
+
+    &__item {
+        float: left;
+        width: 25%;
+        padding-right: 1.25rem; // Стабильный отступ
+        margin-bottom: 1.25rem; // Добавили нижний отступ для многострочной сетки
+        box-sizing: border-box;
+
+        @media (max-width: 1024px) {
+            width: 50%;
+        }
+
+        @media (max-width: 600px) {
+            width: 100%;
+            // На мобилке отступ обычно не нужен, если сетка в одну колонку
+            padding-right: 0;
+        }
+    }
+}
+
+
+=== FILE: \components\Portfolio\Portfolio.test.js ===
+import { render } from '@testing-library/react';
+import Portfolio from './Portfolio';
+
+describe('Portfolio Component', () => {
+    test('renders without crashing', () => {
+        render(<Portfolio />);
+    });
+});
+
+
+=== FILE: \components\Portfolio\FilterTab\FilterTab.js ===
+import React from 'react';
+import './FilterTab.scss';
+
+const FilterTab = ({ label, isActive, onClick }) => {
+    return (
+        <button
+            className={`filter-tab ${isActive ? "filter-tab--active" : ""}`}
+            onClick={onClick}
+        >
+            {label}
+        </button>
+    );
+};
+
+export default FilterTab;
+
+
+=== FILE: \components\Portfolio\FilterTab\FilterTab.scss ===
+@import "../../../assets/styles/variables";
+
+.filter-tab {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 1rem;
+    color: $color-oxford-blue;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    font-family: inherit;
+
+    &:hover {
+        color: white;
+    }
+
+    &--active {
+        color: $color-shamrock;
+
+        &:hover {
+            color: $color-shamrock;
+        }
+    }
+}
+
+
+=== FILE: \components\Portfolio\PortfolioCard\PortfolioCard.js ===
+import React from 'react';
+import './PortfolioCard.scss';
+
+const PortfolioCard = ({ imageUrl, title, description, linkUrl }) => {
+    return (
+        <div className="portfolio-card">
+            <img src={imageUrl} alt={title} className="portfolio-card__img" />
+            <div className="portfolio-card__overlay">
+                <h3 className="portfolio-card__title">{title}</h3>
+                <p className="portfolio-card__desc">{description}</p>
+                <a href={linkUrl} className="portfolio-card__link">View source</a>
+            </div>
+        </div>
+    );
+};
+
+export default PortfolioCard;
+
+
+=== FILE: \components\Portfolio\PortfolioCard\PortfolioCard.scss ===
+@import "../../../assets/styles/variables";
+
+.portfolio-card {
+    position: relative;
+    width: 100%;
+    height: 190px;
+    overflow: hidden;
+    background-color: #f0f0f0;
+
+    &__img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.4s ease;
+    }
+
+    &__overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #fbfbfb;
+        padding: 1.25rem 0.9375rem 1.875rem 0.9375rem;
+        display: flex;
+        flex-direction: column;
+        opacity: 0;
+        transform: translateY(105%);
+        transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
+    }
+
+    &__title {
+        color: $color-shamrock;
+        font-size: 1rem;
+        font-weight: $weight-bold;
+        margin: 0 0 0.625rem 0;
+    }
+
+    &__desc {
+        color: $color-oxford-blue;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 5;
+        -webkit-box-orient: vertical;
+    }
+
+    &__link {
+        margin-top: auto;
+        align-self: flex-start;
+        color: $color-shamrock;
+        font-size: 0.85rem;
+        text-decoration: underline;
+        font-weight: $weight-regular;
+    }
+
+    &:hover {
+        .portfolio-card__overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .portfolio-card__img {
+            transform: scale(1.05);
+        }
+    }
+}
+
+
+=== FILE: \components\Skills\Skills.js ===
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AnimatePresence } from 'framer-motion';
+import { fetchSkills } from '../../store/thunks/skillsThunks';
+import SkillsForm from './SkillsForm/SkillsForm';
+import Button from '../Button/Button';
+import Loader from '../Loader/Loader';
+import Error from '../Error/Error';
+import { faPen, faXmark } from '@fortawesome/free-solid-svg-icons';
+import './Skills.scss';
+
+const Skills = () => {
+    const dispatch = useDispatch();
+    const { items: skills, status, error } = useSelector((state) => state.skills);
+    const [isEditing, setIsEditing] = useState(false);
+
+    const toggleEditing = () => setIsEditing(prev => !prev);
+
+    useEffect(() => {
+        if (status === 'idle') {
+            dispatch(fetchSkills());
+        }
+    }, [status, dispatch]);
+
+    return (
+        <div className="skills">
+            <div className="skills__header">
+                <h2 className="skills__title">Skills</h2>
+
+                <Button
+                    icon={isEditing ? faXmark : faPen}
+                    text={isEditing ? "Close edit" : "Open edit"}
+                    onClick={toggleEditing}
+                    className="skills__toggle-button"
+                />
+            </div>
+
+            {status === 'loading' && <Loader />}
+            {status === 'failed' && <Error message={error} />}
+
+            {status === 'succeeded' && (
+                <>
+                    {/* {isEditing && <SkillsForm />} */}
+
+                    <AnimatePresence>
+                        {isEditing && (
+                            <SkillsForm />
+                        )}
+                    </AnimatePresence>
+
+                    <div className="skills__list">
+                        {skills.map((skill, index) => (
+                            <div className="skills__item" key={skill.id || index}>
+                                <div className="skills__progress-bar">
+                                    <div
+                                        className="skills__progress-fill"
+                                        style={{ width: `${skill.range}%` }}
+                                    >
+                                        <span className="skills__name">{skill.name}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="skills__timeline">
+                        <div className="skills__timeline-line"></div>
+                        <div className="skills__timeline-ticks">
+                            <div className="skills__timeline-tick skills__timeline-tick--first">
+                                <span>Beginner</span>
+                            </div>
+                            <div className="skills__timeline-tick">
+                                <span>Proficient</span>
+                            </div>
+                            <div className="skills__timeline-tick">
+                                <span>Expert</span>
+                            </div>
+                            <div className="skills__timeline-tick skills__timeline-tick--last">
+                                <span>Master</span>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+};
+
+export default Skills;
+
+
+=== FILE: \components\Skills\Skills.scss ===
+@import "../../assets/styles/variables";
+@import "../../assets/styles/typography";
+
+.skills {
+    width: 100%;
+    font-family: sans-serif;
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    &__title {
+        @include text-title-1;
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.625rem;
+        margin-top: 1.5rem;
+    }
+
+    &__progress-bar {
+        width: 100%;
+        height: 29px;
+        background-color: $color-white;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    &__progress-fill {
+        height: 100%;
+        background-color: $color-shamrock;
+        display: flex;
+        align-items: center;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        overflow: hidden;
+        transition: width 0.4s ease-out;
+    }
+
+    &__name {
+        color: $color-white;
+        font-weight: $weight-regular;
+        font-size: 1rem;
+        line-height: 1.2;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+    }
+
+    &__timeline {
+        margin-top: 2rem;
+        position: relative;
+    }
+
+    &__timeline-line {
+        width: 100%;
+        height: 1px;
+        background-color: $color-raven;
+    }
+
+    &__timeline-ticks {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 0.5rem;
+    }
+
+    &__timeline-tick {
+        position: relative;
+        font-size: 0.75rem;
+        color: $color-raven;
+        line-height: 1.2;
+        font-weight: $weight-regular;
+        font-family: inherit;
+        width: 1px;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: -0.5rem;
+            left: 50%;
+            width: 1px;
+            height: 9px;
+            background-color: $color-raven;
+            transform: translate(-50%, -100%);
+        }
+
+        span {
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+
+        &:first-child {
+            &::before {
+                left: 0;
+                transform: translateY(-100%);
+            }
+
+            span {
+                left: 0;
+                transform: none;
+            }
+        }
+
+        &:last-child {
+            &::before {
+                left: auto;
+                right: 0;
+                transform: translateY(-100%);
+            }
+
+            span {
+                left: auto;
+                right: 0;
+                transform: none;
+            }
+        }
+    }
+}
+
+
+=== FILE: \components\Skills\SkillsForm\SkillsForm.js ===
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { motion } from 'framer-motion';
+import { addSkill, updateSkill } from '../../../store/thunks/skillsThunks';
+import './SkillsForm.scss';
+import Button from '../../Button/Button';
+
+const SkillsForm = ({ onClose }) => {
+    const dispatch = useDispatch();
+    const reduxSkills = useSelector((state) => state.skills.items) || [];
+
+    const formik = useFormik({
+        initialValues: { name: '', range: '' },
+        validateOnMount: true,
+        validationSchema: Yup.object({
+            name: Yup.string()
+                .min(2, 'Skill name must be more than 1 character')
+                .required('Skill name is a required field'),
+            range: Yup.number()
+                .typeError(({ originalValue }) => `Skill range must be a 'number' type, but the current type is NAN and value is ${originalValue || "empty"}`)
+                .min(10, 'Skill range must be greater than or equal to 10')
+                .max(100, 'Skill range must be less than or equal to 100')
+                .required('Skill range is a required field')
+        }),
+        onSubmit: (values, { resetForm, setSubmitting }) => {
+            let localSkills = [];
+            try {
+                const localData = localStorage.getItem('skills');
+                localSkills = localData ? JSON.parse(localData) : [];
+            } catch (e) {
+                console.error('Ошибка чтения из localStorage:', e);
+            }
+
+            const allSkills = [...reduxSkills, ...localSkills];
+
+            const existingSkill = allSkills.find(
+                (skill) => skill.name && skill.name.trim().toLowerCase() === values.name.trim().toLowerCase()
+            );
+
+            const actionToDispatch = existingSkill
+                ? updateSkill({ id: existingSkill.id, name: existingSkill.name, range: Number(values.range) })
+                : addSkill({ name: values.name, range: Number(values.range) });
+
+            dispatch(actionToDispatch)
+                .unwrap()
+                .then(() => {
+                    resetForm();
+                    if (onClose) onClose();
+                })
+                .catch((err) => {
+                    console.error('Ошибка при сохранении скилла:', err);
+                })
+                .finally(() => {
+                    setSubmitting(false);
+                });
+        }
+    });
+
+    const showErrors = formik.dirty || formik.touched.name || formik.touched.range;
+
+    return (
+        <motion.div
+            key="skills-form-dynamic-wrapper"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{
+                duration: 0.7,
+                ease: [0.04, 0.62, 0.23, 0.98]
+            }}
+            style={{ overflow: 'hidden', width: '100%', minHeight: 0 }}
+        >
+
+            <div style={{ paddingBottom: '2.5rem', width: '100%' }}>
+                <form onSubmit={formik.handleSubmit} className="skills-form" noValidate>
+                    {/* Ряд поля: Skill name */}
+                    <div className="skills-form__row">
+                        <label htmlFor="name" className="skills-form__label">Skill name</label>
+                        <div className="skills-form__input-wrapper">
+                            <input
+                                id="name"
+                                name="name"
+                                type="text"
+                                placeholder="Enter skill name"
+                                className={`skills-form__input ${showErrors && formik.errors.name
+                                    ? 'skills-form__input--error'
+                                    : ''
+                                    }`}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                value={formik.values.name}
+                            />
+                            {showErrors && formik.errors.name && (
+                                <div className="skills-form__error">{formik.errors.name}</div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="skills-form__row">
+                        <label htmlFor="range" className="skills-form__label">Skill range</label>
+                        <div className="skills-form__input-wrapper">
+                            <input
+                                id="range"
+                                name="range"
+                                type="text"
+                                placeholder="Enter skill range"
+                                className={`skills-form__input ${showErrors && formik.errors.range ? 'skills-form__input--error' : ''}`}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                value={formik.values.range}
+                            />
+                            {showErrors && formik.errors.range && (
+                                <div className="skills-form__error">{formik.errors.range}</div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="skills-form__actions">
+                        <Button
+                            type="submit"
+                            className="skills-form__submit-btn"
+                            disabled={!formik.isValid || !formik.dirty || formik.isSubmitting}
+                            text="Add skill"
+                        />
+                    </div>
+                </form>
+            </div>
+        </motion.div>
+
+    );
+};
+
+export default SkillsForm;
+
+
+=== FILE: \components\Skills\SkillsForm\SkillsForm.scss ===
+@import "../../../assets/styles/variables";
+@import "../../../assets/styles/typography";
+
+.skills-form {
+    width: 100%;
+    padding: 1.25rem 0.9375rem;
+    border: 1px solid $color-shamrock;
+    border-radius: 5px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    will-change: transform, opacity;
+
+    &__row {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.25rem;
+    }
+
+    &__label {
+        font-size: 0.875rem;
+        line-height: 1.2;
+        font-weight: $weight-regular;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        font-family: inherit;
+    }
+
+    &__input-wrapper {
+        flex-grow: 1;
+        max-width: 270px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    &__input {
+        width: 100%;
+        padding: 0.625rem 0.625rem;
+        font-size: 0.75rem;
+        border: 1px solid $color-raven;
+        border-radius: 5px;
+        outline: none;
+        height: 40px;
+
+        &:focus {
+            border-color: $color-shamrock;
+        }
+
+        &--error {
+            border-color: #f44336 !important;
+        }
+
+        &::placeholder {
+            font-family: inherit;
+            font-weight: $weight-regular;
+            line-height: 1.2;
+            color: $color-raven;
+        }
+    }
+
+    &__error {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        margin-top: 0.2rem;
+        font-size: 0.75rem;
+        color: #f44336;
+        line-height: 1.1;
+        width: max-content;
+        max-width: 450px;
+        z-index: 2;
+    }
+
+    &__actions {
+        margin-top: 0.5rem;
+    }
+
+    &__submit-btn {
+        background-color: $color-oxford-blue;
+        color: white;
+        border: none;
+        font-size: 1rem;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $color-shamrock;
+        }
+
+        @media (max-width: 600px) {
+            padding: 0.625rem 1.25rem;
+
+            .custom-btn__icon {
+                margin-right: 5px;
+            }
+
+            .custom-btn__text {
+                max-width: 150px;
+                opacity: 1;
+                overflow: visible;
+            }
+        }
+
+        &:hover:not(:disabled) {
+            background-color: #5a6268;
+        }
+
+        &:disabled {
+            background-color: #6c757d;
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+    }
+}
+
+
+=== FILE: \components\Skills\SkillsForm\SkillsForm.test.js ===
+import { render, screen, waitFor } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { store } from '../../../store/store';
+import SkillsForm from './SkillsForm';
+
+describe('SkillsForm Component', () => {
+    test('renders without crashing', async () => {
+        render(
+            <Provider store={store}>
+                <SkillsForm />
+            </Provider>
+        );
+
+        // Ждем, пока Formik отработает validateOnMount и обновит стейт
+        await waitFor(() => {
+            expect(screen.getByLabelText(/Skill name/i)).toBeInTheDocument();
+        });
+    });
+});
+
+
+=== FILE: \components\TimeLine\TimeLine.js ===
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import TimeLineItem from './TimeLineItem/TimeLineItem';
+import Info from '../Info/Info';
+import { fetchEducations } from '../../store/thunks/educationThunks';
+import Loader from '../Loader/Loader';
+import Error from '../Error/Error';
+import './TimeLine.scss';
+
+const TimeLine = () => {
+    const dispatch = useDispatch();
+
+    // Достаем данные из стора
+    const { items: educations, status, error } = useSelector((state) => state.education);
+
+    useEffect(() => {
+        if (status === 'idle') {
+            dispatch(fetchEducations());
+        }
+    }, [status, dispatch]);
+
+    // 1. Состояние загрузки (Ранний возврат)
+    if (status === 'loading') {
+        return (
+            <div className="timeline">
+                <h2 className="timeline__title">Education</h2>
+                <Loader />
+            </div>
+        );
+    }
+
+    if (status === 'failed') {
+        return (
+            <div className="timeline">
+                <h2 className="timeline__title">Education</h2>
+                <Error message={error} />
+            </div>
+        );
+    }
+
+    const sortedData = [...(educations || [])].sort((a, b) => Number(b.date) - Number(a.date));
+
+    return (
+        <div className="timeline">
+            <h2 className="timeline__title">Education</h2>
+            <div className="timeline__wrapper">
+                <ul className="timeline__list">
+                    {sortedData.map((event, index) => (
+                        <TimeLineItem
+                            key={event.id || index}
+                            date={event.date}
+                            isLast={index === sortedData.length - 1}
+                        >
+                            <Info
+                                className="timeline-item__card"
+                                title={event.title}
+                                content={event.text}
+                            />
+                        </TimeLineItem>
+                    ))}
+                </ul>
+            </div>
+        </div>
+    );
+};
+
+export default TimeLine;
+
+
+=== FILE: \components\TimeLine\TimeLine.scss ===
+@import "../../assets/styles/variables";
+@import "../../assets/styles/typography";
+
+$color-shamrock: #2ecc71;
+
+.timeline {
+    width: 100%;
+    background-color: #ffffff;
+
+    &__title {
+        @include text-title-1;
+        margin-bottom: 2.5rem;
+    }
+
+    &__wrapper {
+        max-height: 370px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: auto;
+
+        @media (hover: hover) and (pointer: fine) {
+            scrollbar-width: thin;
+            scrollbar-color: transparent transparent;
+
+            &::-webkit-scrollbar {
+                width: 4px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: transparent;
+                border-radius: 2px;
+            }
+
+            &:hover {
+                scrollbar-color: lighten($color-shamrock, 15%) #f1f1f1;
+
+                &::-webkit-scrollbar-track {
+                    background: #f1f1f1;
+                }
+
+                &::-webkit-scrollbar-thumb {
+                    background: lighten($color-shamrock, 15%);
+                }
+            }
+        }
+    }
+
+    &__list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+}
+
+
+=== FILE: \components\TimeLine\TimeLineItem\TimeLineItem.js ===
+import React from 'react';
+import './TimeLineItem.scss';
+
+const TimeLineItem = ({ date, isLast, children }) => {
+    return (
+        <li className="timeline-item">
+            <div className="timeline-item__side">
+                <span className="timeline-item__date">{date}</span>
+                {!isLast && <div className="timeline-item__line" />}
+            </div>
+
+            <div className="timeline-item__content">
+                {children}
+            </div>
+        </li>
+    );
+};
+
+export default TimeLineItem;
+
+
+=== FILE: \components\TimeLine\TimeLineItem\TimeLineItem.scss ===
+@import "../../../assets/styles/typography";
+@import "../../../assets/styles/variables";
+
+.timeline-item {
+    display: flex;
+    align-items: stretch;
+    margin-bottom: 0.625rem;
+
+    &__side {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 2.8rem;
+        flex-shrink: 0;
+    }
+
+    &__date {
+        font-size: 1rem;
+        font-weight: $weight-bold;
+        color: $color-oxford-blue;
+        line-height: 1.2;
+        padding-top: 0.6rem;
+        text-align: center;
+        font-family: inherit;
+    }
+
+    &__line {
+        flex: 1;
+        width: 5px;
+        background-color: $color-shamrock;
+        margin-top: 0.6rem;
+    }
+
+    &__content {
+        flex: 1;
+        margin-left: 1.625rem;
+    }
+
+    &__card {
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: -8px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 6px 8px 6px 0;
+            border-color: transparent $color-gallery transparent transparent;
+        }
+    }
+}
+
+
+=== FILE: \pages\Home\HomePage.js ===
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import PhotoBox from '../../components/PhotoBox/PhotoBox';
+import Button from '../../components/Button/Button';
+import './HomePage.scss';
+
+const HomePage = () => {
+    const navigate = useNavigate();
+
+    return (
+        <motion.div
+            className="home-page"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.02 }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+        >
+            <div className="home-page__overlay">
+                <PhotoBox userName="John Doe" className="photo-box--large" />
+
+                <h1 className="home-page__title">Programmer. Creative. Innovator</h1>
+
+                <p className="home-page__description">
+                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque
+                </p>
+                <Button
+                    text="Know more"
+                    onClick={() => navigate('/inner')}
+                />
+            </div>
+        </motion.div>
+    );
+};
+
+export default HomePage;
+
+
+=== FILE: \pages\Home\HomePage.scss ===
+@import "../../assets/styles/variables";
+@import "../../assets/styles/typography";
+
+.home-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+
+    &__overlay {
+        background: linear-gradient(rgba($color-midnight, 0.7), rgba($color-midnight, 0.7)),
+            url('../../assets/images/background.png') center/cover no-repeat;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        width: 100%;
+        padding: 20px;
+        text-align: center;
+    }
+
+    &__title {
+        color: $color-white;
+        margin-bottom: 10px;
+        font-size: 1.5625rem;
+        line-height: 1.2;
+        font-weight: $weight-semibold;
+
+    }
+
+    &__description {
+        color: $color-white;
+        font-size: 0.875rem;
+        max-width: 600px;
+        margin-bottom: 10px;
+        line-height: 1.5;
+        font-weight: $weight-regular;
+    }
+
+    .photo-box--large {
+        margin-bottom: 10px;
+
+        .photo-box__image {
+            width: 150px;
+            height: 150px;
+        }
+
+        .photo-box__name {
+            color: $color-white;
+            font-size: 2.8125rem;
+            font-weight: $weight-bold;
+            line-height: 1.2;
+        }
+
+        @media (max-width: 600px) {
+
+            .photo-box__image {
+                width: 100px;
+                height: 100px;
+                flex-shrink: 0;
+            }
+
+            .photo-box__name {
+                max-height: none;
+                opacity: 1;
+                overflow: visible;
+                font-size: 2rem;
+            }
+        }
+    }
+
+    .custom-btn {
+        background-color: $color-oxford-blue;
+        color: white;
+        border: none;
+        font-size: 1rem;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $color-shamrock;
+        }
+
+        @media (max-width: 600px) {
+            padding: 0.625rem 1.25rem;
+
+            .custom-btn__icon {
+                margin-right: 5px;
+            }
+
+            .custom-btn__text {
+                max-width: 150px;
+                opacity: 1;
+                overflow: visible;
+            }
+        }
+    }
+}
+
+
+=== FILE: \pages\Inner\InnerPage.js ===
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import Panel from "../../components/Panel/Panel";
+import Box from '../../components/Box/Box';
+import BackToTop from "../../components/BackToTop/BackToTop";
+import TimeLine from "../../components/TimeLine/TimeLine";
+import Expertise from '../../components/Expertise/Expertise';
+import Portfolio from "../../components/Portfolio/Portfolio";
+import Address from "../../components/Address/Address";
+import Feedback from '../../components/Feedback/Feedback';
+import reporterAvatar from '../../assets/images/reporter_img.png';
+import Skills from "../../components/Skills/Skills";
+
+import "./InnerPage.scss";
+
+const sectionAnimation = {
+    initial: { opacity: 0, y: 40 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.15 },
+    transition: { duration: 0.6, ease: "easeOut" }
+};
+
+const Inner = () => {
+    const [activeId, setActiveId] = useState("about");
+    const feedbackData = [
+        {
+            feedback: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. ",
+            reporter: {
+                photoUrl: reporterAvatar,
+                name: "John Doe",
+                citeUrl: "https://www.citeexample.com"
+            }
+        },
+        {
+            feedback: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. ",
+            reporter: {
+                photoUrl: reporterAvatar,
+                name: "John Doe",
+                citeUrl: "https://www.citeexample.com"
+            }
+        }
+    ];
+
+    useEffect(() => {
+        // Принудительно поднимаем страницу вверх при загрузке
+        window.scrollTo(0, 0);
+
+        const sectionIds = ["about", "education", "experience", "skills", "portfolio", "contacts", "feedbacks"];
+
+        // Объект-карта, где мы будем хранить актуальное состояние каждой секции (true/false)
+        const intersections = {};
+
+        const observerOptions = {
+            root: null,
+            rootMargin: "-20% 0px -60% 0px", // Зона триггера в верхней части экрана
+            threshold: 0
+        };
+
+        const observerCallback = (entries) => {
+            // 1. Записываем текущее состояние пересечения для изменившихся секций
+            entries.forEach((entry) => {
+                intersections[entry.target.id] = entry.isIntersecting;
+            });
+
+            // 2. Ищем САМУЮ ПЕРВУЮ секцию из нашего массива sectionIds, которая сейчас имеет статус true
+            const activeSection = sectionIds.find((id) => intersections[id]);
+
+            // 3. Если такая нашлась — делаем её активной в меню
+            if (activeSection) {
+                setActiveId(activeSection);
+            }
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+        // Даем небольшую паузу на инициализацию анимаций, затем вешаем обсервер
+        const timeoutId = setTimeout(() => {
+            sectionIds.forEach((id) => {
+                const el = document.getElementById(id);
+                if (el) observer.observe(el);
+            });
+        }, 100);
+
+        return () => {
+            clearTimeout(timeoutId);
+            observer.disconnect();
+        };
+    }, []);
+
+    return (
+        <motion.div
+            className="inner-page"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.02 }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+        >
+            <Panel activeId={activeId} setActiveId={setActiveId} />
+
+            <main className="inner-page__content">
+                <motion.section id="about" className="inner-page__section" {...sectionAnimation}>
+                    <Box />
+                </motion.section>
+
+                <motion.section id="education" className="inner-page__section" {...sectionAnimation}>
+                    <TimeLine />
+                </motion.section>
+
+                <motion.section id="experience" className="inner-page__section" {...sectionAnimation}>
+                    <Expertise />
+                </motion.section>
+
+                <motion.section id="skills" className="inner-page__section" {...sectionAnimation}>
+                    <Skills />
+                </motion.section>
+
+                <motion.section id="portfolio" className="inner-page__section" {...sectionAnimation}>
+                    <Portfolio />
+                </motion.section>
+
+                <motion.section id="contacts" className="inner-page__section" {...sectionAnimation}>
+                    <Address />
+                </motion.section>
+
+                <motion.section id="feedbacks" className="inner-page__section" {...sectionAnimation}>
+                    <Feedback title="Feedbacks" data={feedbackData} />
+                </motion.section>
+            </main>
+
+            <BackToTop />
+        </motion.div>
+    );
+};
+
+export default Inner;
+
+
+=== FILE: \pages\Inner\InnerPage.scss ===
+@import "../../assets/styles/variables";
+
+.inner-page {
+    display: flex;
+    min-height: 100vh;
+    background-color: $color-white;
+
+    &__content {
+        flex: 1;
+        padding: 2.5rem 2.25rem 0.6875rem 0rem;
+        display: flex;
+        flex-direction: column;
+        gap: 3.1875rem;
+    }
+
+    &__section {
+        width: 100%;
+        scroll-margin-top: 40px;
+    }
+}
+
+@media (max-width: 600px) {
+    .inner-page__content {
+        gap: 40px;
+    }
+}
+
+
+=== FILE: \pages\Inner\InnerPages.test.js ===
+import { render, act } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
+import { store } from '../../store/store';
+import Inner from './InnerPage';
+import React from 'react';
+
+// 1. Safely mock window properties using Object.defineProperty
+beforeAll(() => {
+    // Убираем ошибку Error: Not implemented: window.scrollTo
+    window.scrollTo = jest.fn();
+
+    // Делаем мок классом, чтобы компонент мог вызывать new IntersectionObserver()
+    global.IntersectionObserver = class IntersectionObserver {
+        constructor() { }
+        observe() { }
+        unobserve() { }
+        disconnect() { }
+    };
+});
+
+// 2. Mock framer-motion to bypass JSDOM layout calculation crashes
+jest.mock('framer-motion', () => {
+    // ВАЖНО: Изолированный импорт React нужен именно здесь, 
+    // потому что Jest поднимает этот блок в самый верх при компиляции.
+    const React = require('react');
+    const actual = jest.requireActual('framer-motion');
+
+    return {
+        ...actual,
+        motion: {
+            // Strip out animation props so they don't hit the DOM
+            div: React.forwardRef(({ initial, animate, exit, transition, whileInView, viewport, ...props }, ref) => (
+                <div ref={ref} {...props} />
+            )),
+            section: React.forwardRef(({ initial, animate, exit, transition, whileInView, viewport, ...props }, ref) => (
+                <section ref={ref} {...props} />
+            )),
+        },
+    };
+});
+
+describe('Inner Component', () => {
+    test('renders correctly and handles lifecycle', async () => {
+        jest.useFakeTimers();
+
+        await act(async () => {
+            render(
+                <Provider store={store}>
+                    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                        <Inner />
+                    </MemoryRouter>
+                </Provider>
+            );
+        });
+
+        act(() => {
+            jest.runAllTimers();
+        });
+
+        const content = document.querySelector('.inner-page');
+        expect(content).toBeInTheDocument();
+
+        jest.useRealTimers();
+    });
+});
+
+
+=== FILE: \services\server.js ===
+import { createServer, Model } from "miragejs";
+
+export default function makeServer({ environment = "development" } = {}) {
+    return createServer({
+        environment,
+
+        models: {
+            education: Model,
+            skill: Model,
+            experienceItem: Model,
+        },
+
+        seeds(server) {
+            server.create("education", {
+                date: "2001",
+                title: "Title 0",
+                text: "Elit voluptate ad nostrud laboris. Elit incididunt mollit enim enim id id laboris dolore et et mollit. Mollit adipisicing ullamco exercitation ullamco proident aute enim nisi. Dolore eu fugiat consectetur nulla sunt Lorem ex ad. Anim eiusmod do tempor fugiat minim do aliqua amet ex dolore velit.\r\n"
+            });
+            server.create("education", {
+                date: "2000",
+                title: "Title 1",
+                text: "Et irure culpa ad proident labore excepteur elit dolore. Quis commodo elit culpa eiusmod dolor proident non commodo excepteur aute duis duis eu fugiat. Eu duis occaecat nulla eiusmod non esse cillum est aute elit amet cillum commodo.\r\n"
+            });
+            server.create("education", {
+                date: "2012",
+                title: "Title 2",
+                text: "Labore esse tempor nisi non mollit enim elit ullamco veniam elit duis nostrud. Enim pariatur ullamco dolor eu sunt ad velit aute eiusmod aliquip voluptate. Velit magna labore eiusmod eiusmod labore amet eiusmod. In duis eiusmod commodo duis. Exercitation Lorem sint do aliquip veniam duis elit quis culpa irure quis nulla. Reprehenderit fugiat amet sint commodo ex.\r\n"
+            });
+
+            server.create("skill", { name: "JavaScript", range: 80 });
+            server.create("skill", { name: "React", range: 75 });
+
+            server.create("experienceItem", {
+                date: "2013-2014",
+                info: {
+                    company: "Google",
+                    job: "Front-end developer / php programmer",
+                    description: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+                }
+            });
+            server.create("experienceItem", {
+                date: "2012",
+                info: {
+                    company: "Twitter",
+                    job: "Web developer",
+                    description: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
+                }
+            });
+        },
+
+        routes() {
+            this.namespace = "api";
+
+            this.get("/educations", (schema) => {
+                return schema.educations.all().models;
+            }, { timing: 3000 });
+
+            this.get("/skills", (schema) => {
+                return schema.skills.all().models;
+            }, { timing: 3000 });
+
+            this.post("/skills", (schema, request) => {
+                const attrs = JSON.parse(request.requestBody);
+                attrs.range = Number(attrs.range);
+
+                const newSkill = schema.skills.create(attrs);
+
+                return newSkill.attrs;
+            });
+
+            // НОВЫЙ МЕТОД: Обработка PUT-запроса для обновления ранга существующего скилла
+            this.put("/skills", (schema, request) => {
+                const attrs = JSON.parse(request.requestBody);
+                attrs.range = Number(attrs.range);
+
+                // 1. Пробуем найти скилл по ID в базе Mirage
+                let skillModel = schema.skills.find(attrs.id);
+
+                // 2. Если по ID не нашли (из-за генерации UUID на фронте), ищем по имени без учета регистра
+                if (!skillModel && attrs.name) {
+                    skillModel = schema.skills.all().models.find(
+                        (s) => s.name && s.name.trim().toLowerCase() === attrs.name.trim().toLowerCase()
+                    );
+                }
+
+                // 3. Если нашли запись в Mirage — обновляем её данные
+                if (skillModel) {
+                    skillModel.update(attrs);
+                    return skillModel.attrs;
+                }
+
+                // 4. Фолбек: если скилла почему-то вообще нет в базе Mirage, создаем его
+                const newSkill = schema.skills.create(attrs);
+                return newSkill.attrs;
+            });
+
+            this.get("/experience", (schema) => {
+                return schema.experienceItems.all().models;
+            }, { timing: 3000 });
+
+        },
+    });
+}
+
+
+=== FILE: \store\store.js ===
+import { configureStore } from '@reduxjs/toolkit';
+import educationReducer from './educationSlice/educationSlice';
+import skillsReducer from './skillsSlice/skillsSlice';
+import experienceReducer from './experienceSlice/experienceSlice'
+
+export const store = configureStore({
+    reducer: {
+        education: educationReducer,
+        skills: skillsReducer,
+        experience: experienceReducer,
+    },
+});
+
+
+///dsfsdfsdfsdf
+
+
+=== FILE: \store\educationSlice\educationSlice.js ===
+import { createSlice } from '@reduxjs/toolkit';
+import { fetchEducations } from '../thunks/educationThunks';
+
+const educationSlice = createSlice({
+    name: 'education',
+    initialState: {
+        items: [],
+        status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+        error: null,
+    },
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchEducations.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
+            .addCase(fetchEducations.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.items = action.payload;
+            })
+            .addCase(fetchEducations.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            });
+    },
+});
+
+export default educationSlice.reducer;
+
+
+=== FILE: \store\educationSlice\educationSlice.test.js ===
+import educationReducer from './educationSlice';
+
+describe('educationSlice', () => {
+    const initialState = {
+        items: [],
+        status: 'idle',
+        error: null
+    };
+
+    test('должен возвращать дефолтный стейт', () => {
+        expect(educationReducer(undefined, { type: undefined })).toEqual(initialState);
+    });
+
+    test('должен обрабатывать pending', () => {
+        const action = { type: 'education/fetchEducations/pending' };
+        const state = educationReducer(initialState, action);
+        expect(state.status).toBe('loading');
+        expect(state.error).toBeNull();
+    });
+
+    test('должен обрабатывать fulfilled', () => {
+        const mockData = [{ id: 1, title: 'Test Education' }];
+        const action = { type: 'education/fetchEducations/fulfilled', payload: mockData };
+        const state = educationReducer(initialState, action);
+        expect(state.status).toBe('succeeded');
+        expect(state.items).toEqual(mockData);
+    });
+
+    test('должен обрабатывать rejected', () => {
+        const action = {
+            type: 'education/fetchEducations/rejected',
+            error: { message: 'Ошибка сервера 500' }
+        };
+        const state = educationReducer(initialState, action);
+        expect(state.status).toBe('failed');
+        expect(state.error).toBe('Ошибка сервера 500');
+    });
+});
+
+
+=== FILE: \store\experienceSlice\experienceSlice.js ===
+import { createSlice } from '@reduxjs/toolkit';
+import { fetchExperience } from '../thunks/experienceThunks';
+
+const experienceSlice = createSlice({
+    name: 'experience',
+    initialState: {
+        items: [],
+        status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+        error: null
+    },
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchExperience.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
+            .addCase(fetchExperience.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.items = action.payload;
+            })
+            .addCase(fetchExperience.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload || action.error.message;
+            });
+    }
+});
+
+export default experienceSlice.reducer;
+
+
+=== FILE: \store\experienceSlice\experienceSlice.test.js ===
+import experienceReducer from './experienceSlice';
+import { fetchExperience } from '../thunks/experienceThunks';
+
+describe('experienceSlice', () => {
+    const initialState = {
+        items: [],
+        status: 'idle',
+        error: null
+    };
+
+    test('должен возвращать дефолтный стейт', () => {
+        expect(experienceReducer(undefined, { type: undefined })).toEqual(initialState);
+    });
+
+    test('должен обрабатывать pending', () => {
+        const state = experienceReducer(initialState, { type: fetchExperience.pending.type });
+        expect(state.status).toBe('loading');
+    });
+
+    test('должен обрабатывать fulfilled', () => {
+        const mockData = [{ id: 1, title: 'Developer' }];
+        const state = experienceReducer(initialState, {
+            type: fetchExperience.fulfilled.type,
+            payload: mockData
+        });
+        expect(state.status).toBe('succeeded');
+        expect(state.items).toEqual(mockData);
+    });
+
+    test('должен обрабатывать rejected', () => {
+        const state = experienceReducer(initialState, {
+            type: fetchExperience.rejected.type,
+            error: { message: 'Network Error' }
+        });
+        expect(state.status).toBe('failed');
+        expect(state.error).toBe('Network Error');
+    });
+});
+
+
+=== FILE: \store\skillsSlice\skillsSlice.js ===
+import { createSlice } from '@reduxjs/toolkit';
+import { fetchSkills, addSkill, updateSkill } from '../thunks/skillsThunks'; // Импортируем наши санки
+
+const skillsSlice = createSlice({
+    name: 'skills',
+    initialState: {
+        items: [],
+        status: 'idle',
+        error: null,
+    },
+    reducers: {}, // Если появятся синхронные экшены, они будут тут
+    extraReducers: (builder) => {
+        builder
+            // Обработка загрузки списка навыков
+            .addCase(fetchSkills.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(fetchSkills.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.items = action.payload;
+            })
+            .addCase(fetchSkills.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
+            // Обработка успешного добавления нового навыка
+            .addCase(addSkill.fulfilled, (state, action) => {
+                state.items.push(action.payload);
+            })
+            .addCase(updateSkill.fulfilled, (state, action) => {
+                const index = state.items.findIndex((item) => item.id === action.payload.id);
+                if (index !== -1) {
+                    state.items[index] = action.payload; // Меняем старый скилл на обновленный
+                }
+            });
+    },
+});
+
+export default skillsSlice.reducer;
+
+
+=== FILE: \store\skillsSlice\skillsSlice.test.js ===
+import skillsReducer from './skillsSlice';
+
+describe('skillsSlice', () => {
+    const initialState = {
+        items: [],
+        status: 'idle',
+        error: null
+    };
+
+    test('должен возвращать дефолтный стейт', () => {
+        expect(skillsReducer(undefined, { type: undefined })).toEqual(initialState);
+    });
+
+    test('должен обрабатывать pending запроса скилов', () => {
+        const action = { type: 'skills/fetchSkills/pending' };
+        const state = skillsReducer(initialState, action);
+        expect(state.status).toBe('loading');
+    });
+
+    test('должен обрабатывать fulfilled добавления скила', () => {
+        const newSkill = { id: 2, name: 'React', range: '80' };
+        const action = { type: 'skills/addSkill/fulfilled', payload: newSkill };
+        const state = skillsReducer(initialState, action);
+        expect(state.items).toContainEqual(newSkill);
+    });
+});
+
+
+=== FILE: \store\thunks\educationThunks.js ===
+import { createAsyncThunk } from '@reduxjs/toolkit';
+
+// Асинхронный thunk-экшен для получения списка образований
+export const fetchEducations = createAsyncThunk(
+    'education/fetchEducations',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await fetch('/api/educations');
+
+            if (!response.ok) {
+                throw new Error('Не удалось загрузить данные об образовании');
+            }
+
+            const data = await response.json();
+
+            // Если Mirage возвращает объект { educations: [...] }, отдаем именно массив
+            return data.educations || data;
+
+        } catch (error) {
+            // Перехватываем ошибку и отправляем её текст прямо в reducer (в extraReducers)
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+
+=== FILE: \store\thunks\educationThunks.test.js ===
+import { fetchEducations } from './educationThunks'; // Проверь путь к файлу
+
+global.fetch = jest.fn();
+
+describe('education thunks', () => {
+    let dispatch;
+    let getState;
+
+    beforeEach(() => {
+        dispatch = jest.fn();
+        getState = jest.fn();
+        jest.clearAllMocks();
+    });
+
+    it('успешный fetchEducations должен возвращать данные об образовании', async () => {
+        const mockData = { educations: [{ id: 1, university: 'MIT' }] };
+        fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => mockData
+        });
+
+        const action = await fetchEducations()(dispatch, getState, undefined);
+
+        expect(action.type).toBe('education/fetchEducations/fulfilled');
+        expect(action.payload).toEqual(mockData.educations);
+    });
+
+    it('fetchEducations должен возвращать fallback дату, если нет объекта educations', async () => {
+        const mockData = [{ id: 1, university: 'Harvard' }]; // Пришел просто массив
+        fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => mockData
+        });
+
+        const action = await fetchEducations()(dispatch, getState, undefined);
+
+        expect(action.type).toBe('education/fetchEducations/fulfilled');
+        expect(action.payload).toEqual(mockData);
+    });
+
+    it('fetchEducations должен возвращать rejected при ошибке', async () => {
+        fetch.mockResolvedValueOnce({ ok: false });
+
+        const action = await fetchEducations()(dispatch, getState, undefined);
+
+        expect(action.type).toBe('education/fetchEducations/rejected');
+        expect(action.payload).toBe('Не удалось загрузить данные об образовании');
+    });
+});
+
+
+=== FILE: \store\thunks\experienceThunks.js ===
+import { createAsyncThunk } from '@reduxjs/toolkit';
+
+// Асинхронный thunk-экшен для получения списка экспертизы
+export const fetchExperience = createAsyncThunk(
+    'experience/fetchExperience',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await fetch('/api/experience');
+
+            if (!response.ok) {
+                throw new Error('Ошибка при загрузке опыта работы');
+            }
+
+            const data = await response.json();
+
+            return data.experience || data;
+
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+
+=== FILE: \store\thunks\experienceThunks.test.js ===
+import { fetchExperience } from './experienceThunks'; // Путь может отличаться
+
+global.fetch = jest.fn();
+
+describe('experience thunks', () => {
+    let dispatch;
+    let getState;
+
+    beforeEach(() => {
+        dispatch = jest.fn();
+        getState = jest.fn();
+        jest.clearAllMocks();
+    });
+
+    it('успешный fetchExperience должен возвращать массив опыта', async () => {
+        const mockData = { experience: [{ id: 1, company: 'Google' }] };
+        fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => mockData
+        });
+
+        const action = await fetchExperience()(dispatch, getState, undefined);
+
+        expect(action.type).toBe('experience/fetchExperience/fulfilled');
+        expect(action.payload).toEqual(mockData.experience);
+    });
+
+    it('fetchExperience должен возвращать rejected при ошибке', async () => {
+        fetch.mockResolvedValueOnce({ ok: false });
+
+        const action = await fetchExperience()(dispatch, getState, undefined);
+
+        expect(action.type).toBe('experience/fetchExperience/rejected');
+        expect(action.payload).toBe('Ошибка при загрузке опыта работы');
+    });
+});
+
+
+=== FILE: \store\thunks\skillsThunks.js ===
+import { createAsyncThunk } from '@reduxjs/toolkit';
+
+export const fetchSkills = createAsyncThunk(
+    'skills/fetchSkills',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await fetch('/api/skills');
+
+            if (!response.ok) {
+                throw new Error('Не удалось загрузить список навыков');
+            }
+
+            const data = await response.json();
+            const serverSkills = data.skills || data;
+
+            // 2. Сразу после запроса проверяем локальное хранилище
+            const localData = localStorage.getItem('skills');
+            if (localData) {
+                // Если там уже есть данные (например, ранее добавленные через форму),
+                // возвращаем их, чтобы не перезаписывать базу старыми дефолтными сидами
+                return JSON.parse(localData);
+            }
+
+            // 3. Если localStorage было пустым, заполняем его базовыми данными с сервера
+            localStorage.setItem('skills', JSON.stringify(serverSkills));
+            return serverSkills;
+
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const addSkill = createAsyncThunk(
+    'skills/addSkill',
+    async (newSkill, { rejectWithValue }) => {
+        try {
+            const response = await fetch('/api/skills', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newSkill),
+            });
+
+            if (!response.ok) {
+                throw new Error('Не удалось сохранить новый навык на сервере');
+            }
+
+            const savedSkill = await response.json();
+            const actualSkill = savedSkill.skill || savedSkill;
+
+            // ГАРАНТИРУЕМ УНИКАЛЬНОСТЬ ID:
+            const skillWithUniqueId = {
+                ...actualSkill,
+                id: crypto.randomUUID()
+            };
+
+            const localData = localStorage.getItem('skills');
+            const currentSkills = localData ? JSON.parse(localData) : [];
+            const updatedSkills = [...currentSkills, skillWithUniqueId];
+
+            localStorage.setItem('skills', JSON.stringify(updatedSkills));
+
+            return skillWithUniqueId;
+
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+
+export const updateSkill = createAsyncThunk(
+    'skills/updateSkill',
+    async (updatedSkillData, { rejectWithValue }) => {
+        try {
+            const response = await fetch('/api/skills', {
+                method: 'PUT', // Отправляем PUT запрос для обновления данных
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedSkillData),
+            });
+
+            if (!response.ok) {
+                throw new Error('Не удалось обновить навык на сервере');
+            }
+
+            const savedSkill = await response.json();
+            const actualSkill = savedSkill.skill || savedSkill;
+
+            // Собираем финальный объект (на случай, если сервер вернул не полные данные)
+            const finalSkill = { ...updatedSkillData, ...actualSkill };
+
+            // Синхронизируем изменения с localStorage
+            const localData = localStorage.getItem('skills');
+            const currentSkills = localData ? JSON.parse(localData) : [];
+
+            const updatedSkills = currentSkills.map((skill) =>
+                skill.id === finalSkill.id ? finalSkill : skill
+            );
+
+            localStorage.setItem('skills', JSON.stringify(updatedSkills));
+
+            return finalSkill;
+
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+
+=== FILE: \store\thunks\skillsThunks.test.js ===
+import { fetchSkills, addSkill, updateSkill } from './skillsThunks';
+
+// Мокаем глобальный fetch
+global.fetch = jest.fn();
+
+describe('skills thunks', () => {
+    let dispatch;
+    let getState;
+    let setItemSpy;
+
+    // ГАРАНТИРОВАННЫЙ МОК CRYPTO ДЛЯ JSDOM / NODE
+    beforeAll(() => {
+        Object.defineProperty(globalThis, 'crypto', {
+            value: {
+                randomUUID: () => 'mocked-uuid-1234'
+            },
+            configurable: true, // Важно, чтобы можно было перезаписать
+        });
+    });
+
+    beforeEach(() => {
+        dispatch = jest.fn();
+        getState = jest.fn();
+        jest.clearAllMocks();
+
+        // Используем встроенный localStorage из JSDOM
+        localStorage.clear();
+        setItemSpy = jest.spyOn(Storage.prototype, 'setItem');
+    });
+
+    afterEach(() => {
+        setItemSpy.mockRestore();
+    });
+
+    describe('fetchSkills', () => {
+        it('должен возвращать данные с сервера и сохранять в пустой localStorage', async () => {
+            const mockData = { skills: [{ id: '1', name: 'React' }] };
+            fetch.mockResolvedValueOnce({ ok: true, json: async () => mockData });
+
+            const action = await fetchSkills()(dispatch, getState, undefined);
+
+            expect(action.type).toBe('skills/fetchSkills/fulfilled');
+            expect(action.payload).toEqual(mockData.skills);
+            expect(setItemSpy).toHaveBeenCalledWith('skills', JSON.stringify(mockData.skills));
+        });
+
+        it('должен возвращать данные из localStorage, если они там есть', async () => {
+            const localData = [{ id: '2', name: 'Redux' }];
+            // Записываем данные в нативный JSDOM localStorage
+            localStorage.setItem('skills', JSON.stringify(localData));
+
+            fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ skills: [{ id: '1', name: 'React' }] }) });
+
+            const action = await fetchSkills()(dispatch, getState, undefined);
+
+            expect(action.type).toBe('skills/fetchSkills/fulfilled');
+            expect(action.payload).toEqual(localData); // Теперь точно вернет 2!
+        });
+
+        it('должен обрабатывать ошибку сети (rejected)', async () => {
+            fetch.mockResolvedValueOnce({ ok: false });
+
+            const action = await fetchSkills()(dispatch, getState, undefined);
+
+            expect(action.type).toBe('skills/fetchSkills/rejected');
+        });
+    });
+
+    describe('addSkill', () => {
+        it('должен отправлять POST запрос, добавлять UUID и сохранять в localStorage', async () => {
+            const newSkill = { name: 'Jest' };
+            fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ skill: newSkill }) });
+
+            const action = await addSkill(newSkill)(dispatch, getState, undefined);
+
+            expect(action.type).toBe('skills/addSkill/fulfilled');
+            expect(action.payload).toEqual({ name: 'Jest', id: 'mocked-uuid-1234' });
+
+            // Проверяем, что в LS записался массив с новым скиллом
+            expect(setItemSpy).toHaveBeenCalledWith('skills', JSON.stringify([{ name: 'Jest', id: 'mocked-uuid-1234' }]));
+        });
+    });
+
+    describe('updateSkill', () => {
+        it('должен отправлять PUT запрос и обновлять данные в localStorage', async () => {
+            const initialSkills = [{ id: 'mocked-uuid-1234', name: 'Old Name' }];
+            localStorage.setItem('skills', JSON.stringify(initialSkills));
+            setItemSpy.mockClear(); // Очищаем историю вызовов шпиона после сетапа
+
+            const updatedSkill = { id: 'mocked-uuid-1234', name: 'New Name' };
+            fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ skill: updatedSkill }) });
+
+            const action = await updateSkill(updatedSkill)(dispatch, getState, undefined);
+
+            expect(action.type).toBe('skills/updateSkill/fulfilled');
+            expect(action.payload).toEqual(updatedSkill);
+            expect(setItemSpy).toHaveBeenCalledWith('skills', JSON.stringify([updatedSkill]));
+        });
+    });
+});
+
+
